@@ -1,0 +1,11 @@
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\bin\Debug\net9.0\EPMS.Shared.deps.json
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\bin\Debug\net9.0\EPMS.Shared.dll
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\bin\Debug\net9.0\EPMS.Shared.pdb
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\obj\Debug\net9.0\EPMS.Shared.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\obj\Debug\net9.0\EPMS.Shared.AssemblyInfoInputs.cache
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\obj\Debug\net9.0\EPMS.Shared.AssemblyInfo.cs
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\obj\Debug\net9.0\EPMS.Shared.csproj.CoreCompileInputs.cache
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\obj\Debug\net9.0\EPMS.Shared.dll
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\obj\Debug\net9.0\refint\EPMS.Shared.dll
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\obj\Debug\net9.0\EPMS.Shared.pdb
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Shared\obj\Debug\net9.0\ref\EPMS.Shared.dll

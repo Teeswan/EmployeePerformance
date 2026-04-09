@@ -1,0 +1,17 @@
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\bin\Debug\net9.0\EPMS.Infrastructure.deps.json
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\bin\Debug\net9.0\EPMS.Infrastructure.runtimeconfig.json
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\bin\Debug\net9.0\EPMS.Infrastructure.dll
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\bin\Debug\net9.0\EPMS.Infrastructure.pdb
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\bin\Debug\net9.0\EPMS.Domain.dll
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\bin\Debug\net9.0\EPMS.Domain.pdb
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\EPMS.Infrastructure.csproj.AssemblyReference.cache
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\EPMS.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\EPMS.Infrastructure.AssemblyInfoInputs.cache
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\EPMS.Infrastructure.AssemblyInfo.cs
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\EPMS.Infrastructure.csproj.CoreCompileInputs.cache
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\EPMS.Inf.1BA370AE.Up2Date
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\EPMS.Infrastructure.dll
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\refint\EPMS.Infrastructure.dll
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\EPMS.Infrastructure.pdb
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\EPMS.Infrastructure.genruntimeconfig.cache
+C:\Users\User\Downloads\Telegram Desktop\EPMS_Solution\EPMS_Solution\EPMS.Infrastructure\obj\Debug\net9.0\ref\EPMS.Infrastructure.dll
