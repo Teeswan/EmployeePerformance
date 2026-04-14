@@ -1,52 +1,112 @@
+using System.Data;
 using EPMS.Domain.Interfaces;
-using EPMS.Infrastructure.Contexts;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace EPMS.Infrastructure.Repositories;
 
 public class AppraisalFormRepository : IAppraisalFormRepository
 {
-    private readonly AppDbContext _context;
+    private readonly string _connectionString;
 
-    public AppraisalFormRepository(AppDbContext context)
+    public AppraisalFormRepository(IConfiguration configuration)
     {
-        _context = context;
+        _connectionString = configuration.GetConnectionString("DefaultConnection")!;
     }
 
     public async Task<IEnumerable<ApplicationForm>> GetAllAsync()
     {
-        return await _context.ApplicationForms.ToListAsync();
+        var list = new List<ApplicationForm>();
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand("sp_ApplicationForms_GetAll", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+
+        await connection.OpenAsync();
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            list.Add(MapFromReader(reader));
+        }
+        return list;
     }
 
     public async Task<ApplicationForm?> GetByIdAsync(int formId)
     {
-        return await _context.ApplicationForms.FindAsync(formId);
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand("sp_ApplicationForms_GetById", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+        command.Parameters.AddWithValue("@FormID", formId);
+
+        await connection.OpenAsync();
+        using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return MapFromReader(reader);
+        }
+        return null;
     }
 
     public async Task<ApplicationForm> CreateAsync(ApplicationForm entity)
     {
-        _context.ApplicationForms.Add(entity);
-        await _context.SaveChangesAsync();
-        return entity;
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand("sp_ApplicationForms_Create", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+        command.Parameters.AddWithValue("@FormName", (object?)entity.FormName ?? DBNull.Value);
+        command.Parameters.AddWithValue("@IsActive", (object?)entity.IsActive ?? DBNull.Value);
+
+        await connection.OpenAsync();
+        using var reader = await command.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        return MapFromReader(reader);
     }
 
     public async Task<ApplicationForm?> UpdateAsync(ApplicationForm entity)
     {
-        var existing = await _context.ApplicationForms.FindAsync(entity.FormId);
-        if (existing == null) return null;
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand("sp_ApplicationForms_Update", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+        command.Parameters.AddWithValue("@FormID", entity.FormId);
+        command.Parameters.AddWithValue("@FormName", (object?)entity.FormName ?? DBNull.Value);
+        command.Parameters.AddWithValue("@IsActive", (object?)entity.IsActive ?? DBNull.Value);
 
-        _context.Entry(existing).CurrentValues.SetValues(entity);
-        await _context.SaveChangesAsync();
-        return existing;
+        await connection.OpenAsync();
+        using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            return MapFromReader(reader);
+        }
+        return null;
     }
 
     public async Task<bool> DeleteAsync(int formId)
     {
-        var entity = await _context.ApplicationForms.FindAsync(formId);
-        if (entity == null) return false;
+        using var connection = new SqlConnection(_connectionString);
+        using var command = new SqlCommand("sp_ApplicationForms_Delete", connection)
+        {
+            CommandType = CommandType.StoredProcedure
+        };
+        command.Parameters.AddWithValue("@FormID", formId);
 
-        _context.ApplicationForms.Remove(entity);
-        await _context.SaveChangesAsync();
-        return true;
+        await connection.OpenAsync();
+        var rowsAffected = await command.ExecuteNonQueryAsync();
+        return rowsAffected > 0;
+    }
+
+    private static ApplicationForm MapFromReader(SqlDataReader reader)
+    {
+        return new ApplicationForm
+        {
+            FormId = reader.GetInt32(reader.GetOrdinal("FormID")),
+            FormName = reader.IsDBNull(reader.GetOrdinal("FormName")) ? null : reader.GetString(reader.GetOrdinal("FormName")),
+            IsActive = reader.IsDBNull(reader.GetOrdinal("IsActive")) ? null : reader.GetBoolean(reader.GetOrdinal("IsActive"))
+        };
     }
 }
