@@ -10,10 +10,12 @@ namespace EPMS.Api.Controllers;
 public class PerformanceEvaluationsController : ControllerBase
 {
     private readonly IPerformanceEvaluationService _service;
+    private readonly IExcelPdfService _excelPdfService;
 
-    public PerformanceEvaluationsController(IPerformanceEvaluationService service)
+    public PerformanceEvaluationsController(IPerformanceEvaluationService service, IExcelPdfService excelPdfService)
     {
         _service = service;
+        _excelPdfService = excelPdfService;
     }
 
     [HttpGet]
@@ -66,5 +68,27 @@ public class PerformanceEvaluationsController : ControllerBase
         var deleted = await _service.DeleteAsync(id);
         if (!deleted) return NotFound();
         return NoContent();
+    }
+
+    [HttpGet("export/excel")]
+    public async Task<IActionResult> ExportToExcel()
+    {
+        var bytes = await _excelPdfService.ExportPerformanceEvaluationsToExcelAsync();
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "PerformanceEvaluations.xlsx");
+    }
+
+    [HttpPost("import/excel")]
+    public async Task<IActionResult> ImportFromExcel(IFormFile file)
+    {
+        using var stream = file.OpenReadStream();
+        var count = await _excelPdfService.ImportPerformanceEvaluationsFromExcelAsync(stream);
+        return Ok(new { Message = $"{count} records imported successfully." });
+    }
+
+    [HttpGet("export/pdf")]
+    public async Task<IActionResult> ExportToPdf()
+    {
+        var bytes = await _excelPdfService.ExportPerformanceEvaluationsToPdfAsync();
+        return File(bytes, "application/pdf", "PerformanceEvaluations.pdf");
     }
 }

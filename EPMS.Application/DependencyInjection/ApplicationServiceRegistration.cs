@@ -15,6 +15,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IFormQuestionService, FormQuestionService>();
         services.AddScoped<IPerformanceEvaluationService, PerformanceEvaluationService>();
         services.AddScoped<IPerformanceOutcomeService, PerformanceOutcomeService>();
+        services.AddScoped<IExcelPdfService, ExcelPdfService>();
 
         return services;
     }

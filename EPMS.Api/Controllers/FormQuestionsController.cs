@@ -10,10 +10,12 @@ namespace EPMS.Api.Controllers;
 public class FormQuestionsController : ControllerBase
 {
     private readonly IFormQuestionService _service;
+    private readonly IExcelPdfService _excelPdfService;
 
-    public FormQuestionsController(IFormQuestionService service)
+    public FormQuestionsController(IFormQuestionService service, IExcelPdfService excelPdfService)
     {
         _service = service;
+        _excelPdfService = excelPdfService;
     }
 
     [HttpGet]
@@ -60,5 +62,27 @@ public class FormQuestionsController : ControllerBase
         var deleted = await _service.DeleteAsync(formId, questionId);
         if (!deleted) return NotFound();
         return NoContent();
+    }
+
+    [HttpGet("export/excel")]
+    public async Task<IActionResult> ExportToExcel()
+    {
+        var bytes = await _excelPdfService.ExportFormQuestionsToExcelAsync();
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "FormQuestions.xlsx");
+    }
+
+    [HttpPost("import/excel")]
+    public async Task<IActionResult> ImportFromExcel(IFormFile file)
+    {
+        using var stream = file.OpenReadStream();
+        var count = await _excelPdfService.ImportFormQuestionsFromExcelAsync(stream);
+        return Ok(new { Message = $"{count} records imported successfully." });
+    }
+
+    [HttpGet("export/pdf")]
+    public async Task<IActionResult> ExportToPdf()
+    {
+        var bytes = await _excelPdfService.ExportFormQuestionsToPdfAsync();
+        return File(bytes, "application/pdf", "FormQuestions.pdf");
     }
 }

@@ -10,10 +10,12 @@ namespace EPMS.Api.Controllers;
 public class AppraisalCyclesController : ControllerBase
 {
     private readonly IAppraisalCycleService _service;
+    private readonly IExcelPdfService _excelPdfService;
 
-    public AppraisalCyclesController(IAppraisalCycleService service)
+    public AppraisalCyclesController(IAppraisalCycleService service, IExcelPdfService excelPdfService)
     {
         _service = service;
+        _excelPdfService = excelPdfService;
     }
 
     [HttpGet]
@@ -52,5 +54,27 @@ public class AppraisalCyclesController : ControllerBase
         var deleted = await _service.DeleteAsync(id);
         if (!deleted) return NotFound();
         return NoContent();
+    }
+
+    [HttpGet("export/excel")]
+    public async Task<IActionResult> ExportToExcel()
+    {
+        var bytes = await _excelPdfService.ExportAppraisalCyclesToExcelAsync();
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "AppraisalCycles.xlsx");
+    }
+
+    [HttpPost("import/excel")]
+    public async Task<IActionResult> ImportFromExcel(IFormFile file)
+    {
+        using var stream = file.OpenReadStream();
+        var count = await _excelPdfService.ImportAppraisalCyclesFromExcelAsync(stream);
+        return Ok(new { Message = $"{count} records imported successfully." });
+    }
+
+    [HttpGet("export/pdf")]
+    public async Task<IActionResult> ExportToPdf()
+    {
+        var bytes = await _excelPdfService.ExportAppraisalCyclesToPdfAsync();
+        return File(bytes, "application/pdf", "AppraisalCycles.pdf");
     }
 }

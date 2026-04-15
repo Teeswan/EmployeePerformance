@@ -10,10 +10,12 @@ namespace EPMS.Api.Controllers;
 public class AppraisalFormsController : ControllerBase
 {
     private readonly IAppraisalFormService _service;
+    private readonly IExcelPdfService _excelPdfService;
 
-    public AppraisalFormsController(IAppraisalFormService service)
+    public AppraisalFormsController(IAppraisalFormService service, IExcelPdfService excelPdfService)
     {
         _service = service;
+        _excelPdfService = excelPdfService;
     }
 
     [HttpGet]
@@ -52,5 +54,27 @@ public class AppraisalFormsController : ControllerBase
         var deleted = await _service.DeleteAsync(id);
         if (!deleted) return NotFound();
         return NoContent();
+    }
+
+    [HttpGet("export/excel")]
+    public async Task<IActionResult> ExportToExcel()
+    {
+        var bytes = await _excelPdfService.ExportAppraisalFormsToExcelAsync();
+        return File(bytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", "AppraisalForms.xlsx");
+    }
+
+    [HttpPost("import/excel")]
+    public async Task<IActionResult> ImportFromExcel(IFormFile file)
+    {
+        using var stream = file.OpenReadStream();
+        var count = await _excelPdfService.ImportAppraisalFormsFromExcelAsync(stream);
+        return Ok(new { Message = $"{count} records imported successfully." });
+    }
+
+    [HttpGet("export/pdf")]
+    public async Task<IActionResult> ExportToPdf()
+    {
+        var bytes = await _excelPdfService.ExportAppraisalFormsToPdfAsync();
+        return File(bytes, "application/pdf", "AppraisalForms.pdf");
     }
 }
