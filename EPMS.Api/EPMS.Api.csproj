@@ -12,17 +12,19 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Middleware\" />
     <Folder Include="Extensions\" />
+    <Folder Include="Middleware\" />
+    <Folder Include="Extensions\" />
+    <Folder Include="Services\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\EPMS.Application\EPMS.Application.csproj" />
-    <ProjectReference Include="..\EPMS.Infrastructure\EPMS.Infrastructure.csproj" />
-    <ProjectReference Include="..\EPMS.Shared\EPMS.Shared.csproj" />
   </ItemGroup>
 
 </Project>

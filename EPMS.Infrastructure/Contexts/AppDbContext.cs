@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using EPMS.Domain.Entities;
 using EPMS.Infrastructure;
 using Microsoft.EntityFrameworkCore;
+//using EPMS.Domain.Entities;
 
 namespace EPMS.Infrastructure.Contexts;
 
@@ -76,11 +78,21 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<User> Users { get; set; }
 
+    public DbSet<UserRole> UserRoles { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=ConnectionStrings:DefaultConnection");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
+     
+        //modelBuilder.Entity<User>()
+        //    .HasMany(u => u.Roles)
+        //    .WithMany()
+        //    .UsingEntity<UserRole>();
+
         modelBuilder.Entity<ApplicationForm>(entity =>
         {
             entity.HasKey(e => e.FormId).HasName("PK__Applicat__FB05B7BD0CD83A1E");
@@ -669,7 +681,44 @@ public partial class AppDbContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__TeamKPIs__TeamID__59C55456");
         });
+        /////
+        ///
 
+        //modelBuilder.Entity<User>(entity =>
+        //{
+        //    entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCACAD35B11F");
+
+        //    entity.HasIndex(e => e.Username, "UQ__Users__536C85E4BCAAD821").IsUnique();
+
+        //    entity.HasIndex(e => e.EmployeeId, "UQ__Users__7AD04FF02E4308F5").IsUnique();
+
+        //    entity.Property(e => e.UserId).HasColumnName("UserID");
+        //    entity.Property(e => e.EmployeeId).HasColumnName("EmployeeID");
+        //    entity.Property(e => e.Username).HasMaxLength(50);
+
+        //    entity.HasOne(d => d.Employee).WithOne(p => p.User)
+        //        .HasForeignKey<User>(d => d.EmployeeId)
+        //        .HasConstraintName("FK__Users__EmployeeI__47DBAE45");
+
+        //    entity.HasMany(d => d.Roles).WithMany(p => p.Users)
+        //        .UsingEntity<Dictionary<string, object>>(
+        //            "UserRole",
+        //            r => r.HasOne<Role>().WithMany()
+        //                .HasForeignKey("RoleId")
+        //                .OnDelete(DeleteBehavior.ClientSetNull)
+        //                .HasConstraintName("FK__UserRoles__RoleI__534D60F1"),
+        //            l => l.HasOne<User>().WithMany()
+        //                .HasForeignKey("UserId")
+        //                .OnDelete(DeleteBehavior.ClientSetNull)
+        //                .HasConstraintName("FK__UserRoles__UserI__52593CB8"),
+        //            j =>
+        //            {
+        //                j.HasKey("UserId", "RoleId").HasName("PK__UserRole__AF27604F3519AECC");
+        //                j.ToTable("UserRoles");
+        //                j.IndexerProperty<int>("UserId").HasColumnName("UserID");
+        //                j.IndexerProperty<int>("RoleId").HasColumnName("RoleID");
+        //            });
+        //});
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCACAD35B11F");
@@ -686,26 +735,10 @@ public partial class AppDbContext : DbContext
                 .HasForeignKey<User>(d => d.EmployeeId)
                 .HasConstraintName("FK__Users__EmployeeI__47DBAE45");
 
-            entity.HasMany(d => d.Roles).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UserRole",
-                    r => r.HasOne<Role>().WithMany()
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__UserRoles__RoleI__534D60F1"),
-                    l => l.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__UserRoles__UserI__52593CB8"),
-                    j =>
-                    {
-                        j.HasKey("UserId", "RoleId").HasName("PK__UserRole__AF27604F3519AECC");
-                        j.ToTable("UserRoles");
-                        j.IndexerProperty<int>("UserId").HasColumnName("UserID");
-                        j.IndexerProperty<int>("RoleId").HasColumnName("RoleID");
-                    });
+            entity.HasMany(d => d.Roles)
+                  .WithMany(p => p.Users)
+                  .UsingEntity<UserRole>();
         });
-
         OnModelCreatingPartial(modelBuilder);
     }
 

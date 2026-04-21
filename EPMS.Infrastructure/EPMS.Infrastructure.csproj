@@ -9,6 +9,8 @@
   <ItemGroup>
     <Folder Include="Contexts\" />
     <Folder Include="Dependency Injection\" />
+    <Folder Include="Dependency Injection\" />
+    <Folder Include="Repositories\" />
     <Folder Include="Repositories\" />
   </ItemGroup>
 
