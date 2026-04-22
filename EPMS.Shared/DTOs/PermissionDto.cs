@@ -9,10 +9,8 @@ public class PermissionDto
 
 public class PositionPermissionDto
 {
-    public int PositionPermissionId { get; set; }
     public int PositionId { get; set; }
     public string? PositionTitle { get; set; }
     public int PermissionId { get; set; }
     public string? PermissionCode { get; set; }
-    public bool IsActive { get; set; }
 }

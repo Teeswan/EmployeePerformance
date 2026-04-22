@@ -9,12 +9,16 @@ using static EPMS.Infrastructure.StoredProcedures;
 
 namespace EPMS.Infrastructure.Repositories;
 
-public class PositionPermissionRepository : BaseRepository<PositionPermission, int>, IPositionPermissionRepository
+public class PositionPermissionRepository : IPositionPermissionRepository
 {
+    private readonly AppDbContext _context;
+    private readonly DbSet<PositionPermission> _dbSet;
     private readonly ISqlRepository<Permission, int> _sqlPermissionRepository;
 
-    public PositionPermissionRepository(AppDbContext context, ISqlRepository<Permission, int> sqlPermissionRepository) : base(context)
+    public PositionPermissionRepository(AppDbContext context, ISqlRepository<Permission, int> sqlPermissionRepository)
     {
+        _context = context;
+        _dbSet = _context.Set<PositionPermission>();
         _sqlPermissionRepository = sqlPermissionRepository;
     }
 
@@ -26,12 +30,24 @@ public class PositionPermissionRepository : BaseRepository<PositionPermission, i
 
     public async Task<PositionPermission?> GetByPositionAndPermissionAsync(int positionId, int permissionId)
     {
-        return await _context.PositionPermissions
+        return await _dbSet
             .FirstOrDefaultAsync(pp => pp.PositionId == positionId && pp.PermissionId == permissionId);
     }
 
-    public override async Task<IEnumerable<PositionPermission>> GetAllAsync()
+    public async Task<PositionPermission> CreateAsync(PositionPermission entity)
     {
-        return await _dbSet.Where(pp => pp.IsActive == true).AsNoTracking().ToListAsync();
+        await _dbSet.AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return entity;
+    }
+
+    public async Task<bool> DeleteAsync(int positionId, int permissionId)
+    {
+        var entity = await GetByPositionAndPermissionAsync(positionId, permissionId);
+        if (entity == null) return false;
+
+        _dbSet.Remove(entity);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

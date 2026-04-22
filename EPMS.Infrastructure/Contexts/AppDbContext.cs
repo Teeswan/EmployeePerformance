@@ -573,12 +573,8 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<PositionPermission>(entity =>
         {
-            entity.HasKey(e => e.PositionPermissionId).HasName("PK__Position__4FD457AEFC030AF7");
+            entity.HasKey(e => new { e.PositionId, e.PermissionId });
 
-            entity.HasIndex(e => new { e.PositionId, e.PermissionId }, "UQ_Position_Permission").IsUnique();
-
-            entity.Property(e => e.PositionPermissionId).HasColumnName("PositionPermissionID");
-            entity.Property(e => e.IsActive).HasDefaultValue(true);
             entity.Property(e => e.PermissionId).HasColumnName("PermissionID");
             entity.Property(e => e.PositionId).HasColumnName("PositionID");
 

@@ -37,17 +37,13 @@ public class PermissionService : IPermissionService
         var existing = await _repository.GetByPositionAndPermissionAsync(request.PositionId, request.PermissionId);
         if (existing != null)
         {
-            if (existing.IsActive == true) return true;
-            existing.IsActive = true;
-            await _repository.UpdateAsync(existing);
             return true;
         }
 
         var entity = new PositionPermission
         {
             PositionId = request.PositionId,
-            PermissionId = request.PermissionId,
-            IsActive = true
+            PermissionId = request.PermissionId
         };
 
         await _repository.CreateAsync(entity);
@@ -56,11 +52,6 @@ public class PermissionService : IPermissionService
 
     public async Task<bool> RevokePermissionAsync(RevokePermissionRequest request)
     {
-        var existing = await _repository.GetByPositionAndPermissionAsync(request.PositionId, request.PermissionId);
-        if (existing == null) return true;
-
-        existing.IsActive = false;
-        await _repository.UpdateAsync(existing);
-        return true;
+        return await _repository.DeleteAsync(request.PositionId, request.PermissionId);
     }
 }

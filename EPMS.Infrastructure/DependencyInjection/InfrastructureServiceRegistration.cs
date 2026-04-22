@@ -95,6 +95,7 @@ public static class InfrastructureServiceRegistration
 
         // Generic Permission Repository
         services.AddScoped<IBaseRepository<Permission, int>, BaseRepository<Permission, int>>();
+        services.AddScoped<IUserRepository, UserRepository>();
 
         // Authorization
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();

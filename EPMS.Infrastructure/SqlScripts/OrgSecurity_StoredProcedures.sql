@@ -52,7 +52,7 @@ BEGIN
         p.Description
     FROM Permissions p
     INNER JOIN PositionPermissions pp ON p.PermissionId = pp.PermissionId
-    WHERE pp.PositionId = @PositionId AND pp.IsActive = 1;
+    WHERE pp.PositionId = @PositionId;
 END
 GO
 

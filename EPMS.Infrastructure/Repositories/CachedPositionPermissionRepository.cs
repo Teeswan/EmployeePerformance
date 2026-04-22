@@ -6,14 +6,18 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace EPMS.Infrastructure.Repositories;
 
-public class CachedPositionPermissionRepository : CachedBaseRepository<PositionPermission, int>, IPositionPermissionRepository
+public class CachedPositionPermissionRepository : IPositionPermissionRepository
 {
     private readonly IPositionPermissionRepository _innerRepository;
+    private readonly IMemoryCache _cache;
+    private readonly TimeSpan _cacheDuration;
+    private readonly string _cacheKeyPrefix = nameof(PositionPermission);
 
-    public CachedPositionPermissionRepository(IPositionPermissionRepository innerRepository, IMemoryCache cache, TimeSpan cacheDuration) 
-        : base(innerRepository, cache, cacheDuration)
+    public CachedPositionPermissionRepository(IPositionPermissionRepository innerRepository, IMemoryCache cache, TimeSpan cacheDuration)
     {
         _innerRepository = innerRepository;
+        _cache = cache;
+        _cacheDuration = cacheDuration;
     }
 
     public async Task<IEnumerable<Permission>> GetPermissionsByPositionAsync(int positionId)
@@ -39,17 +43,30 @@ public class CachedPositionPermissionRepository : CachedBaseRepository<PositionP
         return entity;
     }
 
-    protected override void InvalidateItemCache(int id)
+    public async Task<PositionPermission> CreateAsync(PositionPermission entity)
     {
-        base.InvalidateItemCache(id);
-        // We don't have the positionId easily here, but we can clear GetAll
-        base.InvalidateCache();
+        var createdEntity = await _innerRepository.CreateAsync(entity);
+        InvalidateCache();
+        return createdEntity;
     }
 
-    protected override void InvalidateCache()
+    public async Task<bool> DeleteAsync(int positionId, int permissionId)
     {
-        base.InvalidateCache();
-        // Clear all permissions related caches for positions
-        // This is tricky without a key tracking system, so we might just clear what we can.
+        var result = await _innerRepository.DeleteAsync(positionId, permissionId);
+        if (result)
+        {
+            InvalidateCache();
+            string key = $"{_cacheKeyPrefix}_GetByPosition_{positionId}_Permission_{permissionId}";
+            _cache.Remove(key);
+        }
+        return result;
+    }
+
+    private void InvalidateCache()
+    {
+        // Clear general caches if any. 
+        // For PositionPermission, we might want to clear GetPermissionsByPosition caches
+        // but since we don't have a list of all positionIds, we might just rely on expiration
+        // or clear specific keys if we had them.
     }
 }

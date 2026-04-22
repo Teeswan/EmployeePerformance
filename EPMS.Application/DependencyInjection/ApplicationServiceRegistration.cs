@@ -35,6 +35,7 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IEmployeeService, EmployeeService>();
         services.AddScoped<ILevelService, LevelService>();
         services.AddScoped<IPositionService, PositionService>();
+        services.AddScoped<ITokenService, TokenService>();
 
         return services;
     }

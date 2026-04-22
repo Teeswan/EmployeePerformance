@@ -1,4 +1,4 @@
-﻿// EPMS.Infrastructure/Repositories/MeetingRepository.cs
+// EPMS.Infrastructure/Repositories/MeetingRepository.cs
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -19,7 +19,7 @@ public class MeetingRepository : IMeetingRepository
         _context = context;
     }
 
-    public async Task<OneOnOneMeeting> GetByIdAsync(int id, CancellationToken cancellationToken)
+    public async Task<OneOnOneMeeting?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
         return await _context.OneOnOneMeetings.FirstOrDefaultAsync(m => m.MeetingId == id, cancellationToken);
     }
