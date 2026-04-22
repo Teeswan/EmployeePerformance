@@ -60,6 +60,40 @@ public static class InfrastructureServiceRegistration
         services.Decorate<IPerformanceOutcomeRepository>((inner, provider) =>
             new CachedPerformanceOutcomeRepository(inner, provider.GetRequiredService<IMemoryCache>(), defaultCacheDuration));
 
+        // Meeting and Unit of Work
+        services.AddScoped<IMeetingRepository, MeetingRepository>();
+        services.AddScoped<IMeetingNoteRepository, MeetingNoteRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+
+        // Org & Security Repositories with Caching
+        services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+        services.Decorate<IDepartmentRepository>((inner, provider) =>
+            new CachedDepartmentRepository(inner, provider.GetRequiredService<IMemoryCache>(), defaultCacheDuration));
+
+        services.AddScoped<ITeamRepository, TeamRepository>();
+        services.Decorate<ITeamRepository>((inner, provider) =>
+            new CachedTeamRepository(inner, provider.GetRequiredService<IMemoryCache>(), defaultCacheDuration));
+
+        services.AddScoped<IPositionPermissionRepository, PositionPermissionRepository>();
+        services.Decorate<IPositionPermissionRepository>((inner, provider) =>
+            new CachedPositionPermissionRepository(inner, provider.GetRequiredService<IMemoryCache>(), defaultCacheDuration));
+
+        // Employee & Personnel Repositories with Caching
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+        services.Decorate<IEmployeeRepository>((inner, provider) =>
+            new CachedEmployeeRepository(inner, provider.GetRequiredService<IMemoryCache>(), defaultCacheDuration));
+
+        services.AddScoped<ILevelRepository, LevelRepository>();
+        services.Decorate<ILevelRepository>((inner, provider) =>
+            new CachedLevelRepository(inner, provider.GetRequiredService<IMemoryCache>(), defaultCacheDuration));
+
+        services.AddScoped<IPositionRepository, PositionRepository>();
+        services.Decorate<IPositionRepository>((inner, provider) =>
+            new CachedPositionRepository(inner, provider.GetRequiredService<IMemoryCache>(), defaultCacheDuration));
+
+        // Generic Permission Repository
+        services.AddScoped<IBaseRepository<Permission, int>, BaseRepository<Permission, int>>();
+
         return services;
     }
 }

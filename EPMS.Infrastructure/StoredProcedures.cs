@@ -57,4 +57,13 @@ public static class StoredProcedures
     public const string PerformanceOutcomes_Delete = "sp_PerformanceOutcomes_Delete";
     public const string PerformanceOutcomes_GetByEmployeeId = "sp_PerformanceOutcomes_GetByEmployeeId";
     public const string PerformanceOutcomes_GetByCycleId = "sp_PerformanceOutcomes_GetByCycleId";
+
+    // Org & Security
+    public const string Departments_GetTree = "sp_GetDepartmentTree";
+    public const string Permissions_GetByPosition = "sp_GetPermissionsByPosition";
+    public const string Teams_GetByDepartment = "sp_GetTeamsByDepartment";
+
+    // Employee & Personnel
+    public const string Employees_GetDetails = "sp_GetEmployeeDetails";
+    public const string Employees_GetHierarchy = "sp_GetOrganizationHierarchy";
 }

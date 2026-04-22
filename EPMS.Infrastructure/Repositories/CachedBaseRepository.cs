@@ -11,8 +11,8 @@ namespace EPMS.Infrastructure.Repositories;
 public class CachedBaseRepository<T, TKey> : IBaseRepository<T, TKey> where T : class
 {
     private readonly IBaseRepository<T, TKey> _innerRepository;
-    private readonly IMemoryCache _cache;
-    private readonly string _cacheKeyPrefix;
+    protected readonly IMemoryCache _cache;
+    protected readonly string _cacheKeyPrefix;
     private readonly TimeSpan _defaultCacheDuration = TimeSpan.FromMinutes(10);
     protected readonly TimeSpan _cacheDuration;
     private static PropertyInfo? _idProperty;
@@ -97,12 +97,12 @@ public class CachedBaseRepository<T, TKey> : IBaseRepository<T, TKey> where T : 
         return result;
     }
 
-    protected void InvalidateCache()
+    protected virtual void InvalidateCache()
     {
         _cache.Remove($"{_cacheKeyPrefix}_GetAll");
     }
 
-    protected void InvalidateItemCache(TKey id)
+    protected virtual void InvalidateItemCache(TKey id)
     {
         _cache.Remove($"{_cacheKeyPrefix}_GetById_{id}");
     }

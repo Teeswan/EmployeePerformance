@@ -1,15 +1,10 @@
-﻿using EPMS.Domain.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using EPMS.Domain.Entities;
 
-namespace EPMS.Domain.Interfaces
+namespace EPMS.Domain.Interfaces;
+
+public interface IEmployeeRepository : IBaseRepository<Employee, int>
 {
-    public interface IEmployeeRepository
-    {
-        Task<Employee> GetByIdAsync(int id, CancellationToken cancellationToken);
-        Task<IEnumerable<Employee>> GetAllAsync(CancellationToken cancellationToken);
-    }
+    Task<IEnumerable<Employee>> GetEmployeesByDepartmentAsync(int departmentId);
+    Task<IEnumerable<Employee>> GetDirectReportsAsync(int managerId);
+    Task<Employee?> GetByCodeAsync(string employeeCode);
 }
