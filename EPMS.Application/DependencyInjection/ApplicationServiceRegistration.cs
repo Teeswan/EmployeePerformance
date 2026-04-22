@@ -20,6 +20,8 @@ public static class ApplicationServiceRegistration
         services.AddScoped<IPerformanceOutcomeService, PerformanceOutcomeService>();
         services.AddScoped<IExcelPdfService, ExcelPdfService>();
 
+        services.AddScoped<IMeetingService, MeetingService>();
+
         return services;
     }
 }

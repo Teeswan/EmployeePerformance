@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Middleware\" />
     <Folder Include="Extensions\" />
   </ItemGroup>
 
@@ -23,6 +22,8 @@
     <ProjectReference Include="..\EPMS.Application\EPMS.Application.csproj" />
     <ProjectReference Include="..\EPMS.Infrastructure\EPMS.Infrastructure.csproj" />
     <ProjectReference Include="..\EPMS.Shared\EPMS.Shared.csproj" />
+	<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+	<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
   </ItemGroup>
 
 </Project>
