@@ -1,0 +1,88 @@
+@page "/appraisalcycles"
+@inject EPMS.Blazor.Services.IAppraisalCycleBlazorService AppraisalCycleService
+@inject NavigationManager NavigationManager
+
+<h3>Appraisal Cycles</h3>
+
+<p>
+    <a href="/appraisalcycles/create">Create New</a>
+</p>
+
+@if (appraisalCycles == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Cycle Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var cycle in appraisalCycles)
+            {
+                <tr>
+                    <td>@cycle.CycleName</td>
+                    <td>@cycle.StartDate.ToShortDateString()</td>
+                    <td>@cycle.EndDate.ToShortDateString()</td>
+                    <td>@cycle.CycleStatus</td>
+                    <td>
+                        <a href="/appraisalcycles/details/@cycle.CycleId">Details</a> |
+                        <a href="/appraisalcycles/edit/@cycle.CycleId">Edit</a> |
+                        <button class="btn btn-danger btn-sm" @onclick="(() => DeleteAppraisalCycle(cycle.CycleId))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<EPMS.Shared.DTOs.AppraisalCycleDto>? appraisalCycles;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAppraisalCycles();
+    }
+
+    private async Task LoadAppraisalCycles()
+    {
+        try
+        {
+            appraisalCycles = await AppraisalCycleService.GetAllAppraisalCyclesAsync();
+        }
+        catch (HttpRequestException ex)
+        {
+            // Log the exception or display an error message to the user
+            Console.WriteLine($"Error loading appraisal cycles: {ex.Message}");
+            appraisalCycles = new List<EPMS.Shared.DTOs.AppraisalCycleDto>(); // Initialize to empty list on error
+        }
+    }
+
+    private async Task DeleteAppraisalCycle(int cycleId)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this appraisal cycle?");
+        if (confirmed)
+        {
+            var success = await AppraisalCycleService.DeleteAppraisalCycleAsync(cycleId);
+            if (success)
+            {
+                await LoadAppraisalCycles(); // Reload data after successful deletion
+            }
+            else
+            {
+                // Handle deletion failure, e.g., show an error message
+                Console.WriteLine("Error deleting appraisal cycle.");
+            }
+        }
+    }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+}

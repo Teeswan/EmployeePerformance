@@ -1,0 +1,109 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
+using EPMS.Domain.Interfaces;
+using Microsoft.Extensions.Caching.Memory;
+
+namespace EPMS.Infrastructure.Repositories;
+
+public class CachedBaseRepository<T, TKey> : IBaseRepository<T, TKey> where T : class
+{
+    private readonly IBaseRepository<T, TKey> _innerRepository;
+    private readonly IMemoryCache _cache;
+    private readonly string _cacheKeyPrefix;
+    private readonly TimeSpan _defaultCacheDuration = TimeSpan.FromMinutes(10);
+    protected readonly TimeSpan _cacheDuration;
+    private static PropertyInfo? _idProperty;
+
+    public CachedBaseRepository(IBaseRepository<T, TKey> innerRepository, IMemoryCache cache, TimeSpan? cacheDuration = null)
+    {
+        _innerRepository = innerRepository ?? throw new ArgumentNullException(nameof(innerRepository));
+        _cache = cache ?? throw new ArgumentNullException(nameof(cache));
+        _cacheKeyPrefix = typeof(T).Name;
+        _cacheDuration = cacheDuration ?? TimeSpan.FromMinutes(10); // Default to 10 minutes if not provided
+
+        // One-time reflection to find the ID property
+        if (_idProperty == null)
+        {
+            // Try to find property with "Id" or ending with "Id" (like CycleId, FormId)
+            _idProperty = typeof(T).GetProperties()
+                .FirstOrDefault(p => p.Name.Equals("Id", StringComparison.OrdinalIgnoreCase) || 
+                                     p.Name.Equals($"{typeof(T).Name}Id", StringComparison.OrdinalIgnoreCase) ||
+                                     p.Name.EndsWith("Id", StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    public virtual async Task<IEnumerable<T>> GetAllAsync()
+    {
+        string key = $"{_cacheKeyPrefix}_GetAll";
+        if (!_cache.TryGetValue(key, out IEnumerable<T>? entities))
+        {
+            entities = await _innerRepository.GetAllAsync();
+            var cacheOptions = new MemoryCacheEntryOptions()
+                .SetAbsoluteExpiration(_cacheDuration);
+            _cache.Set(key, entities, cacheOptions);
+        }
+        return entities ?? new List<T>();
+    }
+
+    public virtual async Task<T?> GetByIdAsync(TKey id)
+    {
+        string key = $"{_cacheKeyPrefix}_GetById_{id}";
+        if (!_cache.TryGetValue(key, out T? entity))
+        {
+            entity = await _innerRepository.GetByIdAsync(id);
+            if (entity != null)
+            {
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(_cacheDuration);
+                _cache.Set(key, entity, cacheOptions);
+            }
+        }
+        return entity;
+    }
+
+    public virtual async Task<T> CreateAsync(T entity)
+    {
+        var createdEntity = await _innerRepository.CreateAsync(entity);
+        InvalidateCache();
+        return createdEntity;
+    }
+
+    public virtual async Task<T?> UpdateAsync(T entity)
+    {
+        var updatedEntity = await _innerRepository.UpdateAsync(entity);
+        InvalidateCache();
+        
+        // Generic ID invalidation
+        if (updatedEntity != null && _idProperty != null)
+        {
+            var id = (TKey)_idProperty.GetValue(updatedEntity)!;
+            InvalidateItemCache(id);
+        }
+        
+        return updatedEntity;
+    }
+
+    public virtual async Task<bool> DeleteAsync(TKey id)
+    {
+        var result = await _innerRepository.DeleteAsync(id);
+        if (result)
+        {
+            InvalidateCache();
+            InvalidateItemCache(id);
+        }
+        return result;
+    }
+
+    protected void InvalidateCache()
+    {
+        _cache.Remove($"{_cacheKeyPrefix}_GetAll");
+    }
+
+    protected void InvalidateItemCache(TKey id)
+    {
+        _cache.Remove($"{_cacheKeyPrefix}_GetById_{id}");
+    }
+}

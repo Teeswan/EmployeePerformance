@@ -1,0 +1,48 @@
+@page "/appraisalforms/create"
+@using EPMS.Shared.Requests
+@inject EPMS.Blazor.Services.IAppraisalFormBlazorService AppraisalFormService
+@inject NavigationManager NavigationManager
+
+<h3>Create Appraisal Form</h3>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm Model="@createRequest" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group mb-3">
+                <label for="formName" class="form-label">Form Name</label>
+                <InputText id="formName" class="form-control" @bind-Value="createRequest.FormName" />
+            </div>
+
+            <div class="form-check mb-3">
+                <InputCheckbox id="isActive" class="form-check-input" @bind-Value="isActiveValue" />
+                <label for="isActive" class="form-check-label">Is Active</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a href="/appraisalforms" class="btn btn-secondary">Cancel</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private CreateAppraisalFormRequest createRequest = new();
+    private bool isActiveValue { get; set; } = true;
+
+    private async Task HandleValidSubmit()
+    {
+        createRequest.IsActive = isActiveValue;
+        try
+        {
+            await AppraisalFormService.CreateAppraisalFormAsync(createRequest);
+            NavigationManager.NavigateTo("/appraisalforms");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating appraisal form: {ex.Message}");
+        }
+    }
+}

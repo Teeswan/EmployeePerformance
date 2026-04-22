@@ -1,0 +1,54 @@
+@page "/appraisalcycles/details/{Id:int}"
+@inject EPMS.Blazor.Services.IAppraisalCycleBlazorService AppraisalCycleService
+@inject NavigationManager NavigationManager
+
+<h3>Appraisal Cycle Details</h3>
+
+@if (appraisalCycle == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div>
+        <h4>@appraisalCycle.CycleName</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Cycle Name</dt>
+            <dd class="col-sm-10">@appraisalCycle.CycleName</dd>
+
+            <dt class="col-sm-2">Start Date</dt>
+            <dd class="col-sm-10">@appraisalCycle.StartDate.ToShortDateString()</dd>
+
+            <dt class="col-sm-2">End Date</dt>
+            <dd class="col-sm-10">@appraisalCycle.EndDate.ToShortDateString()</dd>
+
+            <dt class="col-sm-2">Cycle Status</dt>
+            <dd class="col-sm-10">@appraisalCycle.CycleStatus</dd>
+        </dl>
+    </div>
+    <div>
+        <a href="/appraisalcycles/edit/@appraisalCycle.CycleId" class="btn btn-primary">Edit</a> |
+        <a href="/appraisalcycles" class="btn btn-secondary">Back to List</a>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private EPMS.Shared.DTOs.AppraisalCycleDto? appraisalCycle;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            appraisalCycle = await AppraisalCycleService.GetAppraisalCycleByIdAsync(Id);
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"Error loading appraisal cycle details: {ex.Message}");
+            // Optionally, display an error message to the user
+        }
+    }
+}

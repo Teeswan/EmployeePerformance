@@ -1,0 +1,90 @@
+@page "/appraisalcycles/edit/{Id:int}"
+@inject EPMS.Blazor.Services.IAppraisalCycleBlazorService AppraisalCycleService
+@inject NavigationManager NavigationManager
+
+<h3>Edit Appraisal Cycle</h3>
+
+@if (updateRequest == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="@updateRequest" OnValidSubmit="HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="form-group">
+            <label for="cycleName">Cycle Name</label>
+            <InputText id="cycleName" class="form-control" @bind-Value="updateRequest.CycleName" />
+        </div>
+        <div class="form-group">
+            <label for="startDate">Start Date</label>
+            <InputDate id="startDate" class="form-control" @bind-Value="updateRequest.StartDate" />
+        </div>
+        <div class="form-group">
+            <label for="endDate">End Date</label>
+            <InputDate id="endDate" class="form-control" @bind-Value="updateRequest.EndDate" />
+        </div>
+        <div class="form-group">
+            <label for="status">Cycle Status</label>
+            <InputText id="status" class="form-control" @bind-Value="updateRequest.CycleStatus" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="/appraisalcycles" class="btn btn-secondary">Cancel</a>
+    </EditForm>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private EPMS.Shared.Requests.UpdateAppraisalCycleRequest? updateRequest;
+    private EPMS.Shared.DTOs.AppraisalCycleDto? originalCycle;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            originalCycle = await AppraisalCycleService.GetAppraisalCycleByIdAsync(Id);
+            if (originalCycle != null)
+            {
+                updateRequest = new EPMS.Shared.Requests.UpdateAppraisalCycleRequest
+                {
+                    CycleName = originalCycle.CycleName,
+                    StartDate = originalCycle.StartDate,
+                    EndDate = originalCycle.EndDate,
+                    CycleStatus = originalCycle.CycleStatus
+                };
+            }
+            else
+            {
+                // Handle case where cycle is not found, e.g., navigate back or show error
+                NavigationManager.NavigateTo("/appraisalcycles");
+            }
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"Error loading appraisal cycle for editing: {ex.Message}");
+            NavigationManager.NavigateTo("/appraisalcycles");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (updateRequest != null)
+        {
+            try
+            {
+                await AppraisalCycleService.UpdateAppraisalCycleAsync(Id, updateRequest);
+                NavigationManager.NavigateTo("/appraisalcycles");
+            }
+            catch (HttpRequestException ex)
+            {
+                Console.WriteLine($"Error updating appraisal cycle: {ex.Message}");
+                // Optionally, display an error message to the user
+            }
+        }
+    }
+}

@@ -1,0 +1,92 @@
+@page "/performanceevaluations"
+@inject EPMS.Blazor.Services.IPerformanceEvaluationBlazorService PerformanceEvaluationService
+@inject NavigationManager NavigationManager
+
+<h3>Performance Evaluations</h3>
+
+<p>
+    <a href="/performanceevaluations/create" class="btn btn-primary">Create New</a>
+</p>
+
+@if (performanceEvaluations == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Eval ID</th>
+                <th>Employee ID</th>
+                <th>Cycle ID</th>
+                <th>Self Rating</th>
+                <th>Manager Rating</th>
+                <th>Final Score</th>
+                <th>Finalized</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var eval in performanceEvaluations)
+            {
+                <tr>
+                    <td>@eval.EvalId</td>
+                    <td>@eval.EmployeeId</td>
+                    <td>@eval.CycleId</td>
+                    <td>@eval.SelfRating</td>
+                    <td>@eval.ManagerRating</td>
+                    <td>@eval.FinalRatingScore</td>
+                    <td>@(eval.IsFinalized == true ? "Yes" : "No")</td>
+                    <td>
+                        <a href="/performanceevaluations/details/@eval.EvalId" class="btn btn-info btn-sm">Details</a>
+                        <a href="/performanceevaluations/edit/@eval.EvalId" class="btn btn-warning btn-sm">Edit</a>
+                        <button class="btn btn-danger btn-sm" @onclick="(() => DeletePerformanceEvaluation(eval.EvalId))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<EPMS.Shared.DTOs.PerformanceEvaluationDto>? performanceEvaluations;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPerformanceEvaluations();
+    }
+
+    private async Task LoadPerformanceEvaluations()
+    {
+        try
+        {
+            performanceEvaluations = await PerformanceEvaluationService.GetAllPerformanceEvaluationsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading performance evaluations: {ex.Message}");
+            performanceEvaluations = new List<EPMS.Shared.DTOs.PerformanceEvaluationDto>();
+        }
+    }
+
+    private async Task DeletePerformanceEvaluation(int evalId)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this performance evaluation?");
+        if (confirmed)
+        {
+            var success = await PerformanceEvaluationService.DeletePerformanceEvaluationAsync(evalId);
+            if (success)
+            {
+                await LoadPerformanceEvaluations();
+            }
+            else
+            {
+                Console.WriteLine("Error deleting performance evaluation.");
+            }
+        }
+    }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+}
