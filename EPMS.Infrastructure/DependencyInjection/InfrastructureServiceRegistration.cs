@@ -2,6 +2,8 @@ using EPMS.Domain.Entities;
 using EPMS.Domain.Interfaces;
 using EPMS.Infrastructure.Contexts;
 using EPMS.Infrastructure.Repositories;
+using EPMS.Infrastructure.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
@@ -93,6 +95,10 @@ public static class InfrastructureServiceRegistration
 
         // Generic Permission Repository
         services.AddScoped<IBaseRepository<Permission, int>, BaseRepository<Permission, int>>();
+
+        // Authorization
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
         return services;
     }

@@ -1,4 +1,6 @@
-using EPMS.Application.Interfaces;
+ using EPMS.Application.Interfaces;
+using EPMS.Infrastructure.Authorization;
+using EPMS.Shared.Constants;
 using EPMS.Shared.DTOs;
 using EPMS.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,7 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.Departments.View)]
     public async Task<ActionResult<IEnumerable<DepartmentDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -24,6 +27,7 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [HasPermission(Permissions.Departments.View)]
     public async Task<ActionResult<DepartmentDto>> GetById(int id)
     {
         var result = await _service.GetByIdAsync(id);
@@ -32,6 +36,7 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission(Permissions.Departments.Manage)]
     public async Task<ActionResult<DepartmentDto>> Create(CreateDepartmentRequest request)
     {
         var result = await _service.CreateAsync(request);
@@ -39,6 +44,7 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [HasPermission(Permissions.Departments.Manage)]
     public async Task<ActionResult<DepartmentDto>> Update(int id, UpdateDepartmentRequest request)
     {
         var result = await _service.UpdateAsync(id, request);
@@ -47,6 +53,7 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [HasPermission(Permissions.Departments.Manage)]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);
@@ -55,6 +62,7 @@ public class DepartmentsController : ControllerBase
     }
 
     [HttpGet("tree")]
+    [HasPermission(Permissions.Departments.View)]
     public async Task<ActionResult<IEnumerable<DepartmentTreeDto>>> GetTree()
     {
         var result = await _service.GetTreeAsync();

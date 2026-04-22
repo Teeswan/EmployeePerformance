@@ -1,4 +1,6 @@
 using EPMS.Application.Interfaces;
+using EPMS.Infrastructure.Authorization;
+using EPMS.Shared.Constants;
 using EPMS.Shared.DTOs;
 using EPMS.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,7 @@ public class PositionsController : ControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.Positions.View)]
     public async Task<ActionResult<IEnumerable<PositionDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -24,6 +27,7 @@ public class PositionsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [HasPermission(Permissions.Positions.View)]
     public async Task<ActionResult<PositionDto>> GetById(int id)
     {
         var result = await _service.GetByIdAsync(id);
@@ -32,6 +36,7 @@ public class PositionsController : ControllerBase
     }
 
     [HttpGet("level/{levelId}")]
+    [HasPermission(Permissions.Positions.View)]
     public async Task<ActionResult<IEnumerable<PositionDto>>> GetByLevel(string levelId)
     {
         var result = await _service.GetByLevelAsync(levelId);
@@ -39,6 +44,7 @@ public class PositionsController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission(Permissions.Positions.Manage)]
     public async Task<ActionResult<PositionDto>> Create(CreatePositionRequest request)
     {
         var result = await _service.CreateAsync(request);
@@ -46,6 +52,7 @@ public class PositionsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [HasPermission(Permissions.Positions.Manage)]
     public async Task<ActionResult<PositionDto>> Update(int id, UpdatePositionRequest request)
     {
         var result = await _service.UpdateAsync(id, request);
@@ -54,6 +61,7 @@ public class PositionsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [HasPermission(Permissions.Positions.Manage)]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);

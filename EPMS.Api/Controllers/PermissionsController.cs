@@ -1,4 +1,6 @@
 using EPMS.Application.Interfaces;
+using EPMS.Infrastructure.Authorization;
+using EPMS.Shared.Constants;
 using EPMS.Shared.DTOs;
 using EPMS.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,7 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.Security.ViewPermissions)]
     public async Task<ActionResult<IEnumerable<PermissionDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -24,6 +27,7 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpGet("position/{positionId}")]
+    [HasPermission(Permissions.Security.ViewPermissions)]
     public async Task<ActionResult<IEnumerable<PermissionDto>>> GetByPosition(int positionId)
     {
         var result = await _service.GetByPositionAsync(positionId);
@@ -31,6 +35,7 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpPost("assign")]
+    [HasPermission(Permissions.Security.Manage)]
     public async Task<IActionResult> AssignPermission(AssignPermissionRequest request)
     {
         var result = await _service.AssignPermissionAsync(request);
@@ -39,6 +44,7 @@ public class PermissionsController : ControllerBase
     }
 
     [HttpPost("revoke")]
+    [HasPermission(Permissions.Security.Manage)]
     public async Task<IActionResult> RevokePermission(RevokePermissionRequest request)
     {
         var result = await _service.RevokePermissionAsync(request);

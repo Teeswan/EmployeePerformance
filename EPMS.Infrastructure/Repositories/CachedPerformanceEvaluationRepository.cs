@@ -9,13 +9,11 @@ namespace EPMS.Infrastructure.Repositories;
 public class CachedPerformanceEvaluationRepository : CachedBaseRepository<PerformanceEvaluation, int>, IPerformanceEvaluationRepository
 {
     private readonly IPerformanceEvaluationRepository _innerRepository;
-    private readonly IMemoryCache _cache;
 
     public CachedPerformanceEvaluationRepository(IPerformanceEvaluationRepository innerRepository, IMemoryCache cache, TimeSpan cacheDuration) 
         : base(innerRepository, cache, cacheDuration)
     {
         _innerRepository = innerRepository;
-        _cache = cache;
     }
 
     public override async Task<PerformanceEvaluation?> UpdateAsync(PerformanceEvaluation entity)

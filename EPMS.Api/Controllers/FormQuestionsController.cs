@@ -1,4 +1,6 @@
 using EPMS.Application.Interfaces;
+using EPMS.Infrastructure.Authorization;
+using EPMS.Shared.Constants;
 using EPMS.Shared.DTOs;
 using EPMS.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +21,7 @@ public class FormQuestionsController : ControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.AppraisalForms.View)]
     public async Task<ActionResult<IEnumerable<FormQuestionDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -26,6 +29,7 @@ public class FormQuestionsController : ControllerBase
     }
 
     [HttpGet("by-form/{formId}")]
+    [HasPermission(Permissions.AppraisalForms.View)]
     public async Task<ActionResult<IEnumerable<FormQuestionDto>>> GetByFormId(int formId)
     {
         var result = await _service.GetByFormIdAsync(formId);
@@ -33,6 +37,7 @@ public class FormQuestionsController : ControllerBase
     }
 
     [HttpGet("{formId}/{questionId}")]
+    [HasPermission(Permissions.AppraisalForms.View)]
     public async Task<ActionResult<FormQuestionDto>> GetByFormAndQuestionId(int formId, int questionId)
     {
         var result = await _service.GetByFormAndQuestionIdAsync(formId, questionId);
@@ -41,6 +46,7 @@ public class FormQuestionsController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission(Permissions.AppraisalForms.Manage)]
     public async Task<ActionResult<FormQuestionDto>> Create(CreateFormQuestionRequest request)
     {
         var result = await _service.CreateAsync(request);
@@ -49,6 +55,7 @@ public class FormQuestionsController : ControllerBase
     }
 
     [HttpPut("{formId}/{questionId}")]
+    [HasPermission(Permissions.AppraisalForms.Manage)]
     public async Task<ActionResult<FormQuestionDto>> Update(int formId, int questionId, UpdateFormQuestionRequest request)
     {
         var result = await _service.UpdateAsync(formId, questionId, request);
@@ -57,6 +64,7 @@ public class FormQuestionsController : ControllerBase
     }
 
     [HttpDelete("{formId}/{questionId}")]
+    [HasPermission(Permissions.AppraisalForms.Manage)]
     public async Task<IActionResult> Delete(int formId, int questionId)
     {
         var deleted = await _service.DeleteAsync(formId, questionId);
@@ -65,6 +73,7 @@ public class FormQuestionsController : ControllerBase
     }
 
     [HttpGet("export/excel")]
+    [HasPermission(Permissions.AppraisalForms.View)]
     public async Task<IActionResult> ExportToExcel()
     {
         var bytes = await _excelPdfService.ExportFormQuestionsToExcelAsync();
@@ -72,6 +81,7 @@ public class FormQuestionsController : ControllerBase
     }
 
     [HttpPost("import/excel")]
+    [HasPermission(Permissions.AppraisalForms.Manage)]
     public async Task<IActionResult> ImportFromExcel(IFormFile file)
     {
         using var stream = file.OpenReadStream();
@@ -80,6 +90,7 @@ public class FormQuestionsController : ControllerBase
     }
 
     [HttpGet("export/pdf")]
+    [HasPermission(Permissions.AppraisalForms.View)]
     public async Task<IActionResult> ExportToPdf()
     {
         var bytes = await _excelPdfService.ExportFormQuestionsToPdfAsync();

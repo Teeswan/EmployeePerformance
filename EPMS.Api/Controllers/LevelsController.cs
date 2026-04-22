@@ -1,4 +1,6 @@
 using EPMS.Application.Interfaces;
+using EPMS.Infrastructure.Authorization;
+using EPMS.Shared.Constants;
 using EPMS.Shared.DTOs;
 using EPMS.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,7 @@ public class LevelsController : ControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.Levels.View)]
     public async Task<ActionResult<IEnumerable<LevelDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -24,6 +27,7 @@ public class LevelsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [HasPermission(Permissions.Levels.View)]
     public async Task<ActionResult<LevelDto>> GetById(string id)
     {
         var result = await _service.GetByIdAsync(id);
@@ -32,6 +36,7 @@ public class LevelsController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission(Permissions.Levels.Manage)]
     public async Task<ActionResult<LevelDto>> Create(CreateLevelRequest request)
     {
         var result = await _service.CreateAsync(request);
@@ -39,6 +44,7 @@ public class LevelsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [HasPermission(Permissions.Levels.Manage)]
     public async Task<ActionResult<LevelDto>> Update(string id, UpdateLevelRequest request)
     {
         var result = await _service.UpdateAsync(id, request);
@@ -47,6 +53,7 @@ public class LevelsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [HasPermission(Permissions.Levels.Manage)]
     public async Task<IActionResult> Delete(string id)
     {
         var deleted = await _service.DeleteAsync(id);

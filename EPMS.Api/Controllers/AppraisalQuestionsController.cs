@@ -1,4 +1,6 @@
 using EPMS.Application.Interfaces;
+using EPMS.Infrastructure.Authorization;
+using EPMS.Shared.Constants;
 using EPMS.Shared.DTOs;
 using EPMS.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +21,7 @@ public class AppraisalQuestionsController : ControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.AppraisalQuestions.View)]
     public async Task<ActionResult<IEnumerable<AppraisalQuestionDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -26,6 +29,7 @@ public class AppraisalQuestionsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [HasPermission(Permissions.AppraisalQuestions.View)]
     public async Task<ActionResult<AppraisalQuestionDto>> GetById(int id)
     {
         var result = await _service.GetByIdAsync(id);
@@ -34,6 +38,7 @@ public class AppraisalQuestionsController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission(Permissions.AppraisalQuestions.Manage)]
     public async Task<ActionResult<AppraisalQuestionDto>> Create(CreateAppraisalQuestionRequest request)
     {
         var result = await _service.CreateAsync(request);
@@ -41,6 +46,7 @@ public class AppraisalQuestionsController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [HasPermission(Permissions.AppraisalQuestions.Manage)]
     public async Task<ActionResult<AppraisalQuestionDto>> Update(int id, UpdateAppraisalQuestionRequest request)
     {
         var result = await _service.UpdateAsync(id, request);
@@ -49,6 +55,7 @@ public class AppraisalQuestionsController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [HasPermission(Permissions.AppraisalQuestions.Manage)]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);
@@ -57,6 +64,7 @@ public class AppraisalQuestionsController : ControllerBase
     }
 
     [HttpGet("export/excel")]
+    [HasPermission(Permissions.AppraisalQuestions.View)]
     public async Task<IActionResult> ExportToExcel()
     {
         var bytes = await _excelPdfService.ExportAppraisalQuestionsToExcelAsync();
@@ -64,6 +72,7 @@ public class AppraisalQuestionsController : ControllerBase
     }
 
     [HttpPost("import/excel")]
+    [HasPermission(Permissions.AppraisalQuestions.Manage)]
     public async Task<IActionResult> ImportFromExcel(IFormFile file)
     {
         using var stream = file.OpenReadStream();
@@ -72,6 +81,7 @@ public class AppraisalQuestionsController : ControllerBase
     }
 
     [HttpGet("export/pdf")]
+    [HasPermission(Permissions.AppraisalQuestions.View)]
     public async Task<IActionResult> ExportToPdf()
     {
         var bytes = await _excelPdfService.ExportAppraisalQuestionsToPdfAsync();

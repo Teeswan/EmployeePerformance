@@ -1,4 +1,6 @@
 using EPMS.Application.Interfaces;
+using EPMS.Infrastructure.Authorization;
+using EPMS.Shared.Constants;
 using EPMS.Shared.DTOs;
 using EPMS.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -17,6 +19,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.Employees.View)]
     public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -24,6 +27,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [HasPermission(Permissions.Employees.View)]
     public async Task<ActionResult<EmployeeDetailDto>> GetById(int id)
     {
         var result = await _service.GetByIdAsync(id);
@@ -32,6 +36,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet("code/{code}")]
+    [HasPermission(Permissions.Employees.View)]
     public async Task<ActionResult<EmployeeDto>> GetByCode(string code)
     {
         var result = await _service.GetByCodeAsync(code);
@@ -40,6 +45,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet("department/{departmentId}")]
+    [HasPermission(Permissions.Employees.View)]
     public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetByDepartment(int departmentId)
     {
         var result = await _service.GetByDepartmentAsync(departmentId);
@@ -47,6 +53,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpGet("reports/{managerId}")]
+    [HasPermission(Permissions.Employees.View)]
     public async Task<ActionResult<IEnumerable<EmployeeDto>>> GetDirectReports(int managerId)
     {
         var result = await _service.GetDirectReportsAsync(managerId);
@@ -54,6 +61,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission(Permissions.Employees.Manage)]
     public async Task<ActionResult<EmployeeDto>> Create(CreateEmployeeRequest request)
     {
         var result = await _service.CreateAsync(request);
@@ -61,6 +69,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [HasPermission(Permissions.Employees.Manage)]
     public async Task<ActionResult<EmployeeDto>> Update(int id, UpdateEmployeeRequest request)
     {
         var result = await _service.UpdateAsync(id, request);
@@ -69,6 +78,7 @@ public class EmployeesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [HasPermission(Permissions.Employees.Manage)]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);

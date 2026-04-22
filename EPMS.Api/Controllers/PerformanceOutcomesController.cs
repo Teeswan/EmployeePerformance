@@ -1,4 +1,6 @@
 using EPMS.Application.Interfaces;
+using EPMS.Infrastructure.Authorization;
+using EPMS.Shared.Constants;
 using EPMS.Shared.DTOs;
 using EPMS.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +21,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.PerformanceOutcomes.View)]
     public async Task<ActionResult<IEnumerable<PerformanceOutcomeDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -26,6 +29,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [HasPermission(Permissions.PerformanceOutcomes.View)]
     public async Task<ActionResult<PerformanceOutcomeDto>> GetById(int id)
     {
         var result = await _service.GetByIdAsync(id);
@@ -34,6 +38,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpGet("by-employee/{employeeId}")]
+    [HasPermission(Permissions.PerformanceOutcomes.View)]
     public async Task<ActionResult<IEnumerable<PerformanceOutcomeDto>>> GetByEmployeeId(int employeeId)
     {
         var result = await _service.GetByEmployeeIdAsync(employeeId);
@@ -41,6 +46,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpGet("by-cycle/{cycleId}")]
+    [HasPermission(Permissions.PerformanceOutcomes.View)]
     public async Task<ActionResult<IEnumerable<PerformanceOutcomeDto>>> GetByCycleId(int cycleId)
     {
         var result = await _service.GetByCycleIdAsync(cycleId);
@@ -48,6 +54,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission(Permissions.PerformanceOutcomes.Manage)]
     public async Task<ActionResult<PerformanceOutcomeDto>> Create(CreatePerformanceOutcomeRequest request)
     {
         var result = await _service.CreateAsync(request);
@@ -55,6 +62,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [HasPermission(Permissions.PerformanceOutcomes.Manage)]
     public async Task<ActionResult<PerformanceOutcomeDto>> Update(int id, UpdatePerformanceOutcomeRequest request)
     {
         var result = await _service.UpdateAsync(id, request);
@@ -63,6 +71,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [HasPermission(Permissions.PerformanceOutcomes.Manage)]
     public async Task<IActionResult> Delete(int id)
     {
         var deleted = await _service.DeleteAsync(id);
@@ -71,6 +80,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpGet("export/excel")]
+    [HasPermission(Permissions.PerformanceOutcomes.View)]
     public async Task<IActionResult> ExportToExcel()
     {
         var bytes = await _excelPdfService.ExportPerformanceOutcomesToExcelAsync();
@@ -78,6 +88,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpPost("import/excel")]
+    [HasPermission(Permissions.PerformanceOutcomes.Manage)]
     public async Task<IActionResult> ImportFromExcel(IFormFile file)
     {
         using var stream = file.OpenReadStream();
@@ -86,6 +97,7 @@ public class PerformanceOutcomesController : ControllerBase
     }
 
     [HttpGet("export/pdf")]
+    [HasPermission(Permissions.PerformanceOutcomes.View)]
     public async Task<IActionResult> ExportToPdf()
     {
         var bytes = await _excelPdfService.ExportPerformanceOutcomesToPdfAsync();

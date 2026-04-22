@@ -1,4 +1,6 @@
 using EPMS.Application.Interfaces;
+using EPMS.Infrastructure.Authorization;
+using EPMS.Shared.Constants;
 using EPMS.Shared.DTOs;
 using EPMS.Shared.Requests;
 using Microsoft.AspNetCore.Mvc;
@@ -19,6 +21,7 @@ public class AppraisalResponsesController : ControllerBase
     }
 
     [HttpGet]
+    [HasPermission(Permissions.AppraisalResponses.View)]
     public async Task<ActionResult<IEnumerable<AppraisalResponseDto>>> GetAll()
     {
         var result = await _service.GetAllAsync();
@@ -26,6 +29,7 @@ public class AppraisalResponsesController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [HasPermission(Permissions.AppraisalResponses.View)]
     public async Task<ActionResult<AppraisalResponseDto>> GetById(long id)
     {
         var result = await _service.GetByIdAsync(id);
@@ -34,6 +38,7 @@ public class AppraisalResponsesController : ControllerBase
     }
 
     [HttpGet("by-evaluation/{evalId}")]
+    [HasPermission(Permissions.AppraisalResponses.View)]
     public async Task<ActionResult<IEnumerable<AppraisalResponseDto>>> GetByEvalId(int evalId)
     {
         var result = await _service.GetByEvalIdAsync(evalId);
@@ -41,6 +46,7 @@ public class AppraisalResponsesController : ControllerBase
     }
 
     [HttpPost]
+    [HasPermission(Permissions.AppraisalResponses.Manage)]
     public async Task<ActionResult<AppraisalResponseDto>> Create(CreateAppraisalResponseRequest request)
     {
         var result = await _service.CreateAsync(request);
@@ -48,6 +54,7 @@ public class AppraisalResponsesController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [HasPermission(Permissions.AppraisalResponses.Manage)]
     public async Task<ActionResult<AppraisalResponseDto>> Update(long id, UpdateAppraisalResponseRequest request)
     {
         var result = await _service.UpdateAsync(id, request);
@@ -56,6 +63,7 @@ public class AppraisalResponsesController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [HasPermission(Permissions.AppraisalResponses.Manage)]
     public async Task<IActionResult> Delete(long id)
     {
         var deleted = await _service.DeleteAsync(id);
@@ -64,6 +72,7 @@ public class AppraisalResponsesController : ControllerBase
     }
 
     [HttpGet("export/excel")]
+    [HasPermission(Permissions.AppraisalResponses.View)]
     public async Task<IActionResult> ExportToExcel()
     {
         var bytes = await _excelPdfService.ExportAppraisalResponsesToExcelAsync();
@@ -71,6 +80,7 @@ public class AppraisalResponsesController : ControllerBase
     }
 
     [HttpPost("import/excel")]
+    [HasPermission(Permissions.AppraisalResponses.Manage)]
     public async Task<IActionResult> ImportFromExcel(IFormFile file)
     {
         using var stream = file.OpenReadStream();
@@ -79,6 +89,7 @@ public class AppraisalResponsesController : ControllerBase
     }
 
     [HttpGet("export/pdf")]
+    [HasPermission(Permissions.AppraisalResponses.View)]
     public async Task<IActionResult> ExportToPdf()
     {
         var bytes = await _excelPdfService.ExportAppraisalResponsesToPdfAsync();
