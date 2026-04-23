@@ -33,3 +33,7 @@ C:\Users\User\source\repos\EmployeePerformance\EPMS.Shared\obj\Debug\net9.0\EPMS
 C:\Users\User\source\repos\EmployeePerformance\EPMS.Shared\obj\Debug\net9.0\refint\EPMS.Shared.dll
 C:\Users\User\source\repos\EmployeePerformance\EPMS.Shared\obj\Debug\net9.0\EPMS.Shared.pdb
 C:\Users\User\source\repos\EmployeePerformance\EPMS.Shared\obj\Debug\net9.0\ref\EPMS.Shared.dll
+C:\Users\User\source\repos\EmployeePerformance\EPMS.Shared\bin\Debug\net9.0\EPMS.Domain.dll
+C:\Users\User\source\repos\EmployeePerformance\EPMS.Shared\bin\Debug\net9.0\EPMS.Domain.pdb
+C:\Users\User\source\repos\EmployeePerformance\EPMS.Shared\obj\Debug\net9.0\EPMS.Shared.csproj.AssemblyReference.cache
+C:\Users\User\source\repos\EmployeePerformance\EPMS.Shared\obj\Debug\net9.0\EPMS.Sha.7158CA3E.Up2Date

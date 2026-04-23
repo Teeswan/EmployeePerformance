@@ -33,3 +33,4 @@ C:\Users\User\source\repos\EmployeePerformance\EPMS.Domain\obj\Debug\net9.0\EPMS
 C:\Users\User\source\repos\EmployeePerformance\EPMS.Domain\obj\Debug\net9.0\refint\EPMS.Domain.dll
 C:\Users\User\source\repos\EmployeePerformance\EPMS.Domain\obj\Debug\net9.0\EPMS.Domain.pdb
 C:\Users\User\source\repos\EmployeePerformance\EPMS.Domain\obj\Debug\net9.0\ref\EPMS.Domain.dll
+C:\Users\User\source\repos\EmployeePerformance\EPMS.Domain\obj\Debug\net9.0\EPMS.Domain.csproj.AssemblyReference.cache
