@@ -1,0 +1,90 @@
+@page "/appraisalresponses"
+@inject EPMS.Blazor.Services.IAppraisalResponseBlazorService AppraisalResponseService
+@inject NavigationManager NavigationManager
+
+<h3>Appraisal Responses</h3>
+
+<p>
+    <a href="/appraisalresponses/create" class="btn btn-primary">Create New</a>
+</p>
+
+@if (appraisalResponses == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Eval ID</th>
+                <th>Question ID</th>
+                <th>Respondent ID</th>
+                <th>Answer</th>
+                <th>Rating</th>
+                <th>Anonymous</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var response in appraisalResponses)
+            {
+                <tr>
+                    <td>@response.EvalId</td>
+                    <td>@response.QuestionId</td>
+                    <td>@response.RespondentId</td>
+                    <td>@response.AnswerText</td>
+                    <td>@response.RatingValue</td>
+                    <td>@(response.IsAnonymous == true ? "Yes" : "No")</td>
+                    <td>
+                        <a href="/appraisalresponses/details/@response.ResponseId" class="btn btn-info btn-sm">Details</a>
+                        <a href="/appraisalresponses/edit/@response.ResponseId" class="btn btn-warning btn-sm">Edit</a>
+                        <button class="btn btn-danger btn-sm" @onclick="(() => DeleteAppraisalResponse((int)response.ResponseId))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<EPMS.Shared.DTOs.AppraisalResponseDto>? appraisalResponses;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAppraisalResponses();
+    }
+
+    private async Task LoadAppraisalResponses()
+    {
+        try
+        {
+            appraisalResponses = await AppraisalResponseService.GetAllAppraisalResponsesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading appraisal responses: {ex.Message}");
+            appraisalResponses = new List<EPMS.Shared.DTOs.AppraisalResponseDto>();
+        }
+    }
+
+    private async Task DeleteAppraisalResponse(int responseId)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this appraisal response?");
+        if (confirmed)
+        {
+            var success = await AppraisalResponseService.DeleteAppraisalResponseAsync(responseId);
+            if (success)
+            {
+                await LoadAppraisalResponses();
+            }
+            else
+            {
+                Console.WriteLine("Error deleting appraisal response.");
+            }
+        }
+    }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+}

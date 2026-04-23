@@ -1,7 +1,7 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
-namespace EPMS.Infrastructure;
+namespace EPMS.Domain.Entities;
 
 public partial class MeetingNote
 {

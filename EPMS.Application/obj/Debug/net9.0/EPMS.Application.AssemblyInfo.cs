@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("EPMS.Application")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+b8e8a1e42ba937285cdb9f4b3430857092e4d989")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c0b00eae6e02bf687860ddb6300b99f814b105b0")]
 [assembly: System.Reflection.AssemblyProductAttribute("EPMS.Application")]
 [assembly: System.Reflection.AssemblyTitleAttribute("EPMS.Application")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

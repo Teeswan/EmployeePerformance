@@ -1,0 +1,68 @@
+@page "/appraisalresponses/create"
+@using EPMS.Shared.Requests
+@inject EPMS.Blazor.Services.IAppraisalResponseBlazorService AppraisalResponseService
+@inject NavigationManager NavigationManager
+
+<h3>Create Appraisal Response</h3>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="@createRequest" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group mb-3">
+                <label for="evalId" class="form-label">Evaluation ID</label>
+                <InputNumber id="evalId" class="form-control" @bind-Value="createRequest.EvalId" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="questionId" class="form-label">Question ID</label>
+                <InputNumber id="questionId" class="form-control" @bind-Value="createRequest.QuestionId" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="respondentId" class="form-label">Respondent ID</label>
+                <InputNumber id="respondentId" class="form-control" @bind-Value="createRequest.RespondentId" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="answerText" class="form-label">Answer Text</label>
+                <InputTextArea id="answerText" class="form-control" @bind-Value="createRequest.AnswerText" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="ratingValue" class="form-label">Rating Value</label>
+                <InputNumber id="ratingValue" class="form-control" @bind-Value="createRequest.RatingValue" />
+            </div>
+
+            <div class="form-check mb-3">
+                <InputCheckbox id="isAnonymous" class="form-check-input" @bind-Value="isAnonymousValue" />
+                <label for="isAnonymous" class="form-check-label">Is Anonymous</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a href="/appraisalresponses" class="btn btn-secondary">Cancel</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private CreateAppraisalResponseRequest createRequest = new();
+    private bool isAnonymousValue { get; set; } = false;
+
+    private async Task HandleValidSubmit()
+    {
+        createRequest.IsAnonymous = isAnonymousValue;
+        try
+        {
+            await AppraisalResponseService.CreateAppraisalResponseAsync(createRequest);
+            NavigationManager.NavigateTo("/appraisalresponses");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating appraisal response: {ex.Message}");
+        }
+    }
+}

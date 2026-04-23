@@ -1,0 +1,127 @@
+@page "/performanceoutcomes/edit/{Id:int}"
+@using EPMS.Shared.Requests
+@inject EPMS.Blazor.Services.IPerformanceOutcomeBlazorService PerformanceOutcomeService
+@inject NavigationManager NavigationManager
+
+<h3>Edit Performance Outcome</h3>
+
+<hr />
+@if (updateRequest == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-6">
+            <EditForm Model="@updateRequest" OnValidSubmit="HandleValidSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="form-group mb-3">
+                    <label for="employeeId" class="form-label">Employee ID</label>
+                    <InputNumber id="employeeId" class="form-control" @bind-Value="updateRequest.EmployeeId" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="cycleId" class="form-label">Cycle ID</label>
+                    <InputNumber id="cycleId" class="form-control" @bind-Value="updateRequest.CycleId" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="recommendationType" class="form-label">Recommendation Type</label>
+                    <InputText id="recommendationType" class="form-control" @bind-Value="updateRequest.RecommendationType" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="oldPositionId" class="form-label">Old Position ID</label>
+                    <InputNumber id="oldPositionId" class="form-control" @bind-Value="updateRequest.OldPositionId" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="newPositionId" class="form-label">New Position ID</label>
+                    <InputNumber id="newPositionId" class="form-control" @bind-Value="updateRequest.NewPositionId" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="oldLevelId" class="form-label">Old Level ID</label>
+                    <InputText id="oldLevelId" class="form-control" @bind-Value="updateRequest.OldLevelId" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="newLevelId" class="form-label">New Level ID</label>
+                    <InputText id="newLevelId" class="form-control" @bind-Value="updateRequest.NewLevelId" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="approvalStatus" class="form-label">Approval Status</label>
+                    <InputText id="approvalStatus" class="form-control" @bind-Value="updateRequest.ApprovalStatus" />
+                </div>
+
+                <div class="form-group mb-3">
+                    <label for="effectiveDate" class="form-label">Effective Date</label>
+                    <InputDate id="effectiveDate" class="form-control" @bind-Value="effectiveDateValue" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save</button>
+                <a href="/performanceoutcomes" class="btn btn-secondary">Cancel</a>
+            </EditForm>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private UpdatePerformanceOutcomeRequest? updateRequest;
+    private DateTime? effectiveDateValue { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var outcome = await PerformanceOutcomeService.GetPerformanceOutcomeByIdAsync(Id);
+        if (outcome != null)
+        {
+            updateRequest = new UpdatePerformanceOutcomeRequest
+            {
+                EmployeeId = outcome.EmployeeId,
+                CycleId = outcome.CycleId,
+                RecommendationType = outcome.RecommendationType,
+                OldPositionId = outcome.OldPositionId,
+                NewPositionId = outcome.NewPositionId,
+                OldLevelId = outcome.OldLevelId,
+                NewLevelId = outcome.NewLevelId,
+                ApprovalStatus = outcome.ApprovalStatus,
+                EffectiveDate = outcome.EffectiveDate
+            };
+            if (outcome.EffectiveDate.HasValue)
+            {
+                effectiveDateValue = outcome.EffectiveDate.Value.ToDateTime(TimeOnly.MinValue);
+            }
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/performanceoutcomes");
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (updateRequest != null)
+        {
+            if (effectiveDateValue.HasValue)
+            {
+                updateRequest.EffectiveDate = DateOnly.FromDateTime(effectiveDateValue.Value);
+            }
+            try
+            {
+                await PerformanceOutcomeService.UpdatePerformanceOutcomeAsync(Id, updateRequest);
+                NavigationManager.NavigateTo("/performanceoutcomes");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating performance outcome: {ex.Message}");
+            }
+        }
+    }
+}

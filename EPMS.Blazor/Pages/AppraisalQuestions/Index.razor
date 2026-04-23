@@ -1,0 +1,84 @@
+@page "/appraisalquestions"
+@inject EPMS.Blazor.Services.IAppraisalQuestionBlazorService AppraisalQuestionService
+@inject NavigationManager NavigationManager
+
+<h3>Appraisal Questions</h3>
+
+<p>
+    <a href="/appraisalquestions/create" class="btn btn-primary">Create New</a>
+</p>
+
+@if (appraisalQuestions == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Question Text</th>
+                <th>Category</th>
+                <th>Required</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var question in appraisalQuestions)
+            {
+                <tr>
+                    <td>@question.QuestionText</td>
+                    <td>@question.Category</td>
+                    <td>@(question.IsRequired == true ? "Yes" : "No")</td>
+                    <td>
+                        <a href="/appraisalquestions/details/@question.QuestionId" class="btn btn-info btn-sm">Details</a>
+                        <a href="/appraisalquestions/edit/@question.QuestionId" class="btn btn-warning btn-sm">Edit</a>
+                        <button class="btn btn-danger btn-sm" @onclick="(() => DeleteAppraisalQuestion(question.QuestionId))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<EPMS.Shared.DTOs.AppraisalQuestionDto>? appraisalQuestions;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAppraisalQuestions();
+    }
+
+    private async Task LoadAppraisalQuestions()
+    {
+        try
+        {
+            appraisalQuestions = await AppraisalQuestionService.GetAllAppraisalQuestionsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading appraisal questions: {ex.Message}");
+            appraisalQuestions = new List<EPMS.Shared.DTOs.AppraisalQuestionDto>();
+        }
+    }
+
+    private async Task DeleteAppraisalQuestion(int questionId)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this appraisal question?");
+        if (confirmed)
+        {
+            var success = await AppraisalQuestionService.DeleteAppraisalQuestionAsync(questionId);
+            if (success)
+            {
+                await LoadAppraisalQuestions();
+            }
+            else
+            {
+                Console.WriteLine("Error deleting appraisal question.");
+            }
+        }
+    }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+}

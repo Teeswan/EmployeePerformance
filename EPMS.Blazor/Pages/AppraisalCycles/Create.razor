@@ -1,0 +1,48 @@
+@page "/appraisalcycles/create"
+@inject EPMS.Blazor.Services.IAppraisalCycleBlazorService AppraisalCycleService
+@inject NavigationManager NavigationManager
+
+<h3>Create Appraisal Cycle</h3>
+
+<EditForm Model="@createRequest" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="cycleName">Cycle Name</label>
+        <InputText id="cycleName" class="form-control" @bind-Value="createRequest.CycleName" />
+    </div>
+    <div class="form-group">
+        <label for="startDate">Start Date</label>
+        <InputDate id="startDate" class="form-control" @bind-Value="createRequest.StartDate" />
+    </div>
+    <div class="form-group">
+        <label for="endDate">End Date</label>
+        <InputDate id="endDate" class="form-control" @bind-Value="createRequest.EndDate" />
+    </div>
+    <div class="form-group">
+        <label for="status">Cycle Status</label>
+        <InputText id="status" class="form-control" @bind-Value="createRequest.CycleStatus" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a href="/appraisalcycles" class="btn btn-secondary">Cancel</a>
+</EditForm>
+
+@code {
+    private EPMS.Shared.Requests.CreateAppraisalCycleRequest createRequest = new();
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            await AppraisalCycleService.CreateAppraisalCycleAsync(createRequest);
+            NavigationManager.NavigateTo("/appraisalcycles");
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"Error creating appraisal cycle: {ex.Message}");
+            // Optionally, display an error message to the user
+        }
+    }
+}

@@ -1,0 +1,82 @@
+@page "/appraisalforms"
+@inject EPMS.Blazor.Services.IAppraisalFormBlazorService AppraisalFormService
+@inject NavigationManager NavigationManager
+
+<h3>Appraisal Forms</h3>
+
+<p>
+    <a href="/appraisalforms/create" class="btn btn-primary">Create New</a>
+</p>
+
+@if (appraisalForms == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var form in appraisalForms)
+            {
+                <tr>
+                    <td>@form.FormName</td>
+                    <td>@(form.IsActive == true ? "Active" : "Inactive")</td>
+                    <td>
+                        <a href="/appraisalforms/details/@form.FormId" class="btn btn-info btn-sm">Details</a>
+                        <a href="/appraisalforms/edit/@form.FormId" class="btn btn-warning btn-sm">Edit</a>
+                        <button class="btn btn-danger btn-sm" @onclick="(() => DeleteAppraisalForm(form.FormId))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private IEnumerable<EPMS.Shared.DTOs.AppraisalFormDto>? appraisalForms;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAppraisalForms();
+    }
+
+    private async Task LoadAppraisalForms()
+    {
+        try
+        {
+            appraisalForms = await AppraisalFormService.GetAllAppraisalFormsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading appraisal forms: {ex.Message}");
+            appraisalForms = new List<EPMS.Shared.DTOs.AppraisalFormDto>();
+        }
+    }
+
+    private async Task DeleteAppraisalForm(int formId)
+    {
+        var confirmed = await JSRuntime.InvokeAsync<bool>("confirm", "Are you sure you want to delete this appraisal form?");
+        if (confirmed)
+        {
+            var success = await AppraisalFormService.DeleteAppraisalFormAsync(formId);
+            if (success)
+            {
+                await LoadAppraisalForms();
+            }
+            else
+            {
+                Console.WriteLine("Error deleting appraisal form.");
+            }
+        }
+    }
+
+    [Inject]
+    public IJSRuntime JSRuntime { get; set; } = default!;
+}

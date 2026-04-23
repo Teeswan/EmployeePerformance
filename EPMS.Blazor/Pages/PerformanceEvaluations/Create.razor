@@ -1,0 +1,82 @@
+@page "/performanceevaluations/create"
+@using EPMS.Shared.Requests
+@inject EPMS.Blazor.Services.IPerformanceEvaluationBlazorService PerformanceEvaluationService
+@inject NavigationManager NavigationManager
+
+<h3>Create Performance Evaluation</h3>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="@createRequest" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group mb-3">
+                <label for="employeeId" class="form-label">Employee ID</label>
+                <InputNumber id="employeeId" class="form-control" @bind-Value="createRequest.EmployeeId" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="cycleId" class="form-label">Cycle ID</label>
+                <InputNumber id="cycleId" class="form-control" @bind-Value="createRequest.CycleId" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="selfRating" class="form-label">Self Rating</label>
+                <InputNumber id="selfRating" class="form-control" @bind-Value="createRequest.SelfRating" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="managerRating" class="form-label">Manager Rating</label>
+                <InputNumber id="managerRating" class="form-control" @bind-Value="createRequest.ManagerRating" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="selfComments" class="form-label">Self Comments</label>
+                <InputTextArea id="selfComments" class="form-control" @bind-Value="createRequest.SelfComments" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="managerComments" class="form-label">Manager Comments</label>
+                <InputTextArea id="managerComments" class="form-control" @bind-Value="createRequest.ManagerComments" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="finalRatingScore" class="form-label">Final Rating Score</label>
+                <InputNumber id="finalRatingScore" class="form-control" @bind-Value="createRequest.FinalRatingScore" />
+            </div>
+
+            <div class="form-check mb-3">
+                <InputCheckbox id="isFinalized" class="form-check-input" @bind-Value="isFinalizedValue" />
+                <label for="isFinalized" class="form-check-label">Is Finalized</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a href="/performanceevaluations" class="btn btn-secondary">Cancel</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private CreatePerformanceEvaluationRequest createRequest = new();
+    private bool isFinalizedValue { get; set; } = false;
+
+    private async Task HandleValidSubmit()
+    {
+        createRequest.IsFinalized = isFinalizedValue;
+        if (isFinalizedValue)
+        {
+            createRequest.FinalizedAt = DateTime.Now;
+        }
+        try
+        {
+            await PerformanceEvaluationService.CreatePerformanceEvaluationAsync(createRequest);
+            NavigationManager.NavigateTo("/performanceevaluations");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating performance evaluation: {ex.Message}");
+        }
+    }
+}

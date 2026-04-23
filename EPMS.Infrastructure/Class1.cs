@@ -1,4 +1,4 @@
-﻿namespace EPMS.Infrastructure
+namespace EPMS.Infrastructure
 {
     public class Class1
     {

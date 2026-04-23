@@ -1,0 +1,53 @@
+@page "/appraisalquestions/create"
+@using EPMS.Shared.Requests
+@inject EPMS.Blazor.Services.IAppraisalQuestionBlazorService AppraisalQuestionService
+@inject NavigationManager NavigationManager
+
+<h3>Create Appraisal Question</h3>
+
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <EditForm Model="@createRequest" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group mb-3">
+                <label for="questionText" class="form-label">Question Text</label>
+                <InputTextArea id="questionText" class="form-control" @bind-Value="createRequest.QuestionText" />
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="category" class="form-label">Category</label>
+                <InputText id="category" class="form-control" @bind-Value="createRequest.Category" />
+            </div>
+
+            <div class="form-check mb-3">
+                <InputCheckbox id="isRequired" class="form-check-input" @bind-Value="isRequiredValue" />
+                <label for="isRequired" class="form-check-label">Is Required</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Create</button>
+            <a href="/appraisalquestions" class="btn btn-secondary">Cancel</a>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private CreateAppraisalQuestionRequest createRequest = new();
+    private bool isRequiredValue { get; set; } = false;
+
+    private async Task HandleValidSubmit()
+    {
+        createRequest.IsRequired = isRequiredValue;
+        try
+        {
+            await AppraisalQuestionService.CreateAppraisalQuestionAsync(createRequest);
+            NavigationManager.NavigateTo("/appraisalquestions");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error creating appraisal question: {ex.Message}");
+        }
+    }
+}
