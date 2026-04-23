@@ -158,6 +158,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.ParentDepartment).WithMany(p => p.InverseParentDepartment)
                 .HasForeignKey(d => d.ParentDepartmentId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Departments_Departments_Parent");
         });
 
@@ -184,7 +185,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Department).WithMany(p => p.DepartmentKpis)
                 .HasForeignKey(d => d.DepartmentId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__Departmen__Depar__55009F39");
         });
 
@@ -218,6 +219,7 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Department).WithMany(p => p.Employees)
                 .HasForeignKey(d => d.DepartmentId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__Employees__Depar__403A8C7D");
 
             entity.HasOne(d => d.Position).WithMany(p => p.Employees)
@@ -617,10 +619,12 @@ public partial class AppDbContext : DbContext
 
             entity.HasOne(d => d.Department).WithMany(p => p.Teams)
                 .HasForeignKey(d => d.DepartmentId)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK__Teams__Departmen__10566F31");
 
             entity.HasOne(d => d.Manager).WithMany(p => p.Teams)
                 .HasForeignKey(d => d.ManagerId)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Teams__ManagerID__0F624AF8");
 
             entity.HasMany(d => d.Employees).WithMany(p => p.TeamsNavigation)

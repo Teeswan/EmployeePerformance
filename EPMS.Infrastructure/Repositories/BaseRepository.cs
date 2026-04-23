@@ -1,7 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using EPMS.Domain.Interfaces;
 using EPMS.Infrastructure.Contexts;
+using EPMS.Infrastructure.Exceptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace EPMS.Infrastructure.Repositories;
@@ -47,7 +50,36 @@ public class BaseRepository<T, TKey> : IBaseRepository<T, TKey> where T : class
         if (entity == null) return false;
 
         _dbSet.Remove(entity);
-        await _context.SaveChangesAsync();
-        return true;
+        try
+        {
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex)
+        {
+            throw HandleDbUpdateException(ex, entity);
+        }
+    }
+
+    private Exception HandleDbUpdateException(DbUpdateException ex, T entity)
+    {
+        var innerException = ex.InnerException;
+        if (innerException?.Message.Contains("REFERENCE constraint") == true)
+        {
+            var entityName = typeof(T).Name;
+            var keyProperty = _dbSet.EntityType.FindPrimaryKey()?.Properties.FirstOrDefault();
+            var entityId = keyProperty != null
+                ? entity.GetType().GetProperty(keyProperty.Name)?.GetValue(entity) ?? 0
+                : 0;
+
+            return new RelatedEntityExistsException(
+                entityName,
+                entityId,
+                "related",
+                0
+            );
+        }
+
+        return new EntityConstraintException($"Error deleting {typeof(T).Name}: {ex.Message}", ex);
     }
 }
