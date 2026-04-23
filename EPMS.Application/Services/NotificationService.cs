@@ -1,39 +1,29 @@
-﻿using EPMS.Application.Interfaces;
-using EPMS.Infrastructure.Contexts;
+using AutoMapper;
+using EPMS.Application.Interfaces;
+using EPMS.Domain.Entities;
+using EPMS.Domain.Interfaces;
 using EPMS.Shared.DTOs;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EPMS.Application.Services
 {
     public class NotificationService : INotificationService
     {
-        private readonly AppDbContext _context;
+        private readonly INotificationRepository _repository;
+        private readonly IMapper _mapper;
 
-        public NotificationService(AppDbContext context)
+        public NotificationService(INotificationRepository repository, IMapper mapper)
         {
-            _context = context;
+            _repository = repository;
+            _mapper = mapper;
         }
 
         public async Task<List<NotificationDto>> GetAllNotificationsAsync()
         {
-            return await _context.Notifications
-                .Select(n => new NotificationDto
-                {
-                    NotificationId = (int)n.NotificationId,
-                    Title = n.Title,
-                    Type = n.Type,
-                    RelatedEntityId = (int?)n.RelatedEntityId,
-                    IsRead = n.IsRead,
-                    CreatedAt = n.CreatedAt,
-                    UserId = (int)n.UserId
-                })
-                .ToListAsync();
+            var entities = await _repository.GetAllAsync();
+            return _mapper.Map<List<NotificationDto>>(entities.ToList());
         }
-
     }
 }

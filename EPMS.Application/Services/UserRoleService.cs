@@ -1,33 +1,28 @@
-﻿using EPMS.Application.Interfaces;
-using EPMS.Infrastructure.Contexts;
+﻿using AutoMapper;
+using EPMS.Application.Interfaces;
+using EPMS.Domain.Interfaces;
 using EPMS.Shared.DTOs;
-using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace EPMS.Application.Services
 {
     public class UserRoleService : IUserRoleService
     {
-        private readonly AppDbContext _context;
+        private readonly IUserRoleRepository _userRoleRepository;
+        private readonly IMapper _mapper;
 
-        public UserRoleService(AppDbContext context)
+        public UserRoleService(IUserRoleRepository userRoleRepository, IMapper mapper)
         {
-            _context = context;
+            _userRoleRepository = userRoleRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<UserRoleDto>> GetAllUserRolesAsync()
         {
-            return await _context.UserRoles
-                .Select(ur => new UserRoleDto
-                {
-                    UserId = ur.UserId,
-                    RoleId = ur.RoleId
-                })
-                .ToListAsync();
+            var userRoles = await _userRoleRepository.GetAllUserRolesAsync();
+            return _mapper.Map<List<UserRoleDto>>(userRoles.ToList());
         }
     }
 }

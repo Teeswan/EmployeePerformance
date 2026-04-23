@@ -65,6 +65,13 @@ public static class InfrastructureServiceRegistration
         // Meeting and Unit of Work
         services.AddScoped<IMeetingRepository, MeetingRepository>();
         services.AddScoped<IMeetingNoteRepository, MeetingNoteRepository>();
+        services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<INotificationRepository, NotificationRepository>();
+        services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
         services.AddScoped<IUnitOfWork, UnitOfWork>();
 
         // Org & Security Repositories with Caching

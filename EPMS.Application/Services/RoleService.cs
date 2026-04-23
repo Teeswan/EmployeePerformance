@@ -1,36 +1,29 @@
-﻿using EPMS.Application.Interfaces;
-using System;
+using AutoMapper;
+using EPMS.Application.Interfaces;
+using EPMS.Domain.Entities;
+using EPMS.Domain.Interfaces;
+using EPMS.Shared.DTOs;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using EPMS.Shared.DTOs;
-using EPMS.Infrastructure.Contexts;
-using Microsoft.EntityFrameworkCore;
 
 namespace EPMS.Application.Services
 {
     public class RoleService : IRoleService
     {
-        private readonly AppDbContext _context;
+        private readonly IRoleRepository _repository;
+        private readonly IMapper _mapper;
 
-        // Constructor Injection သုံးပြီး DbContext ကို လှမ်းခေါ်ခြင်း
-        public RoleService(AppDbContext context)
+        public RoleService(IRoleRepository repository, IMapper mapper)
         {
-            _context = context;
+            _repository = repository;
+            _mapper = mapper;
         }
 
-        // Database ထဲက Role တွေကို DTO အဖြစ်ပြောင်းပြီး ဆွဲထုတ်ခြင်း
         public async Task<List<RoleDto>> GetAllRolesAsync()
         {
-            return await _context.Roles
-                .Select(r => new RoleDto
-                {
-                    RoleID = r.RoleId,
-                    RoleName = r.RoleName
-                })
-                .ToListAsync();
+            var entities = await _repository.GetAllAsync();
+            return _mapper.Map<List<RoleDto>>(entities.ToList());
         }
-
     }
 }

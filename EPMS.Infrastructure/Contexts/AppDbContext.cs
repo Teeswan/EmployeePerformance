@@ -73,7 +73,7 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<Team> Teams { get; set; }
 
     public virtual DbSet<TeamKpi> TeamKpis { get; set; }
-
+    public virtual DbSet<UserRole> UserRoles { get; set; }
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -671,6 +671,14 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("FK__TeamKPIs__TeamID__59C55456");
         });
 
+        modelBuilder.Entity<UserRole>(entity =>
+        {
+            entity.HasKey(e => new { e.UserId, e.RoleId }).HasName("PK__UserRole__AF27604F3519AECC");
+            entity.ToTable("UserRoles");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.RoleId).HasColumnName("RoleID");
+        });
+
         modelBuilder.Entity<User>(entity =>
         {
             entity.HasKey(e => e.UserId).HasName("PK__Users__1788CCACAD35B11F");
@@ -688,22 +696,19 @@ public partial class AppDbContext : DbContext
                 .HasConstraintName("FK__Users__EmployeeI__47DBAE45");
 
             entity.HasMany(d => d.Roles).WithMany(p => p.Users)
-                .UsingEntity<Dictionary<string, object>>(
-                    "UserRole",
+                .UsingEntity<UserRole>(
                     r => r.HasOne<Role>().WithMany()
-                        .HasForeignKey("RoleId")
+                        .HasForeignKey(ur => ur.RoleId)
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK__UserRoles__RoleI__534D60F1"),
                     l => l.HasOne<User>().WithMany()
-                        .HasForeignKey("UserId")
+                        .HasForeignKey(ur => ur.UserId)
                         .OnDelete(DeleteBehavior.ClientSetNull)
                         .HasConstraintName("FK__UserRoles__UserI__52593CB8"),
                     j =>
                     {
-                        j.HasKey("UserId", "RoleId").HasName("PK__UserRole__AF27604F3519AECC");
+                        j.HasKey(ur => new { ur.UserId, ur.RoleId }).HasName("PK__UserRole__AF27604F3519AECC");
                         j.ToTable("UserRoles");
-                        j.IndexerProperty<int>("UserId").HasColumnName("UserID");
-                        j.IndexerProperty<int>("RoleId").HasColumnName("RoleID");
                     });
         });
 
