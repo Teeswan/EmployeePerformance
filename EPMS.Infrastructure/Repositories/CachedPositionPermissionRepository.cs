@@ -46,7 +46,7 @@ public class CachedPositionPermissionRepository : IPositionPermissionRepository
     public async Task<PositionPermission> CreateAsync(PositionPermission entity)
     {
         var createdEntity = await _innerRepository.CreateAsync(entity);
-        InvalidateCache();
+        InvalidateCache(entity.PositionId);
         return createdEntity;
     }
 
@@ -55,18 +55,15 @@ public class CachedPositionPermissionRepository : IPositionPermissionRepository
         var result = await _innerRepository.DeleteAsync(positionId, permissionId);
         if (result)
         {
-            InvalidateCache();
+            InvalidateCache(positionId);
             string key = $"{_cacheKeyPrefix}_GetByPosition_{positionId}_Permission_{permissionId}";
             _cache.Remove(key);
         }
         return result;
     }
 
-    private void InvalidateCache()
+    private void InvalidateCache(int positionId)
     {
-        // Clear general caches if any. 
-        // For PositionPermission, we might want to clear GetPermissionsByPosition caches
-        // but since we don't have a list of all positionIds, we might just rely on expiration
-        // or clear specific keys if we had them.
+        _cache.Remove($"{_cacheKeyPrefix}_GetByPosition_{positionId}");
     }
 }
