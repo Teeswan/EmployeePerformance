@@ -21,14 +21,17 @@
             </MudText>
         </div>
         <div class="d-flex gap-3">
-            <MudTooltip Text="Generate Employee Performance Report" Arrow="true">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary"
-                           StartIcon="@Icons.Material.Filled.Description"
-                           OnClick="GenerateEmployeePerformanceReport"
-                           Class="rounded-lg">
-                    Generate Report
-                </MudButton>
-            </MudTooltip>
+            @if (detail != null && !string.Equals(detail.PositionTitle, "Admin", StringComparison.OrdinalIgnoreCase))
+            {
+                <MudTooltip Text="Generate Employee Performance Report" Arrow="true">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.Description"
+                               OnClick="GenerateEmployeePerformanceReport"
+                               Class="rounded-lg">
+                        Generate Report
+                    </MudButton>
+                </MudTooltip>
+            }
             <MudTooltip Text="Edit employee" Arrow="true">
                 <MudButton Variant="Variant.Outlined" Color="Color.Warning"
                            StartIcon="@Icons.Material.Filled.Edit"
