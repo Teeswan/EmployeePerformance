@@ -1,61 +1,249 @@
-<MudNavMenu>
-    <div class="nav-header px-4 py-4">
-        <div class="d-flex align-items-center">
-            <MudAvatar Color="Color.Primary" Size="Size.Large" Class="mr-3">
-                <MudIcon Icon="@Icons.Material.Filled.Insights" Size="Size.Large" />
-            </MudAvatar>
-            <div>
-                <MudText Typo="Typo.h6" Class="fw-bold">EPMS</MudText>
-                <MudText Typo="Typo.caption" Color="Color.Secondary">Performance System</MudText>
+<style>
+    /* ── Base nav link ── */
+    ::deep .mud-nav-link {
+        border-radius: 12px;
+        padding: 12px 18px;
+        margin: 3px 14px;
+        color: #6b7280;
+        font-size: 14px;
+        font-weight: 500;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+        letter-spacing: -0.01em;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        gap: 12px;
+    }
+
+    ::deep .mud-nav-link:hover {
+        background: #f3f4f6;
+        color: #111827;
+        transform: translateX(2px);
+    }
+
+    ::deep .mud-nav-link:hover .mud-nav-link-icon,
+    ::deep .mud-nav-link:hover .mud-icon-root {
+        transform: scale(1.12);
+        transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Active — Blue pill with left accent */
+    ::deep .mud-nav-link.active {
+        background: #eff6ff;
+        color: #2563eb;
+        font-weight: 600;
+        border-left: 3px solid #2563eb;
+        border-radius: 0 12px 12px 0;
+        margin-left: 0;
+        padding-left: 29px;
+    }
+
+    ::deep .mud-nav-link .mud-nav-link-icon,
+    ::deep .mud-nav-link .mud-icon-root {
+        font-size: 20px;
+        color: inherit !important;
+        opacity: 0.75;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    ::deep .mud-nav-link.active .mud-nav-link-icon,
+    ::deep .mud-nav-link.active .mud-icon-root {
+        opacity: 1;
+        color: #2563eb !important;
+        transform: scale(1.05);
+    }
+
+    /* ── Nav group header ── */
+    ::deep .mud-nav-group .mud-nav-link {
+        color: #374151;
+        font-weight: 600;
+        font-size: 13.5px;
+        border-radius: 12px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    ::deep .mud-nav-group .mud-nav-link:hover {
+        background: #f3f4f6;
+        color: #111827;
+        transform: translateX(2px);
+    }
+
+    ::deep .mud-nav-group .mud-nav-link:hover .mud-nav-link-icon,
+    ::deep .mud-nav-group .mud-nav-link:hover .mud-icon-root {
+        transform: scale(1.12);
+    }
+
+    /* ── Nested sub-links ── */
+    ::deep .mud-nav-group-list .mud-nav-link {
+        padding: 9px 16px 9px 46px;
+        font-size: 13px;
+        font-weight: 400;
+        color: #6b7280;
+        margin: 1px 12px;
+        border-radius: 10px;
+        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    ::deep .mud-nav-group-list .mud-nav-link:hover {
+        background: #f3f4f6;
+        color: #111827;
+        transform: translateX(2px);
+    }
+
+    ::deep .mud-nav-group-list .mud-nav-link:hover .mud-nav-link-icon,
+    ::deep .mud-nav-group-list .mud-nav-link:hover .mud-icon-root {
+        transform: scale(1.1);
+    }
+
+    ::deep .mud-nav-group-list .mud-nav-link.active {
+        background: #eff6ff;
+        color: #2563eb;
+        font-weight: 500;
+        border-left: 3px solid #2563eb;
+        border-radius: 0 10px 10px 0;
+        margin-left: 0;
+        padding-left: 43px;
+    }
+
+    /* ── Section labels ── */
+    .nav-section-label {
+        display: block;
+        font-size: 10px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+        color: #9ca3af;
+        padding: 20px 22px 6px;
+        font-family: 'Inter', 'Segoe UI', sans-serif;
+    }
+
+    /* ── Thin divider ── */
+    .nav-divider {
+        height: 1px;
+        background: #f1f5f9;
+        margin: 8px 18px;
+    }
+
+    /* ── Scrollbar ── */
+    ::deep .mud-navmenu::-webkit-scrollbar { width: 5px; }
+    ::deep .mud-navmenu::-webkit-scrollbar-track { background: transparent; }
+    ::deep .mud-navmenu::-webkit-scrollbar-thumb {
+        background: #3b82f6;
+        border-radius: 10px;
+    }
+    ::deep .mud-navmenu::-webkit-scrollbar-thumb:hover {
+        background: #2563eb;
+    }
+</style>
+
+<MudNavMenu Style="
+    background: #ffffff;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #f1f5f9;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    overflow: hidden;
+">
+
+    <!-- Logo -->
+    <div style="padding: 24px 22px 20px; border-bottom: 1px solid #f3f4f6;">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div style="
+                width: 38px; height: 38px;
+                border-radius: 12px;
+                background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                display: flex; align-items: center; justify-content: center;
+                flex-shrink: 0;
+                box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
+            ">
+                <img src="images/Nexus.png" alt=""
+                     style="width: 24px; height: 24px; object-fit: contain;" />
             </div>
+            <span style="
+                font-size: 18px;
+                font-weight: 700;
+                color: #111827;
+                letter-spacing: -0.03em;
+                font-family: 'Inter', 'Segoe UI', sans-serif;
+            ">Nexus</span>
         </div>
     </div>
-    <MudDivider Class="my-2" />
-    <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home" Match="NavLinkMatch.All">Home</MudNavLink>
-    <MudNavLink Href="/debug" Icon="@Icons.Material.Filled.BugReport">Debug</MudNavLink>
-    <MudText Typo="Typo.subtitle2" Class="px-4 py-2 text-grey">Organization</MudText>
-    <MudNavLink Href="/departments" Icon="@Icons.Material.Filled.Domain">Departments</MudNavLink>
-    <MudNavLink Href="/teams" Icon="@Icons.Material.Filled.Groups">Teams</MudNavLink>
-    <MudNavLink href="/employees" Icon="@Icons.Material.Filled.Badge">Employees</MudNavLink>
-    <MudNavLink Href="/levels" Icon="@Icons.Material.Filled.SignalCellularAlt">Levels</MudNavLink>
-    <MudNavLink Href="/positions" Icon="@Icons.Material.Filled.Work">Positions</MudNavLink>
-    <MudText Typo="Typo.subtitle2" Class="px-4 py-2 text-grey">Performance</MudText>
-    <MudNavLink Href="/appraisalcycles" Icon="@Icons.Material.Filled.EventNote">Appraisal Cycles</MudNavLink>
-    <MudNavLink Href="/appraisalforms" Icon="@Icons.Material.Filled.Description">Appraisal Forms</MudNavLink>
-    <MudNavLink Href="/appraisalquestions" Icon="@Icons.Material.Filled.Quiz">Appraisal Questions</MudNavLink>
-    <MudNavLink Href="/appraisalresponses" Icon="@Icons.Material.Filled.QuestionAnswer">Appraisal Responses</MudNavLink>
-    <MudNavLink Href="/performanceevaluations" Icon="@Icons.Material.Filled.Assessment">Performance Evaluations</MudNavLink>
-    <MudNavLink Href="/performanceoutcomes" Icon="@Icons.Material.Filled.TaskAlt">Performance Outcomes</MudNavLink>
-    <MudNavLink Href="/pip" Icon="@Icons.Material.Filled.TrendingUp">Performance Improvement Plans</MudNavLink>
-    <MudNavLink Href="/one-on-one-meetings" Icon="@Icons.Material.Filled.People">1:1 Meetings</MudNavLink>
-    <MudNavGroup Title="KPI Management" Icon="@Icons.Material.Filled.BarChart" Expanded="true">
-        <MudNavLink Href="/kpi-hierarchy/master" Icon="@Icons.Material.Filled.LibraryBooks">Master KPI Library</MudNavLink>
-        <MudNavLink Href="/kpi-hierarchy/department" Icon="@Icons.Material.Filled.AccountBalance">Department KPIs</MudNavLink>
-        <MudNavLink Href="/kpi-hierarchy/team" Icon="@Icons.Material.Filled.Groups">Team KPIs</MudNavLink>
-        <MudNavLink Href="/kpi-hierarchy/employee" Icon="@Icons.Material.Filled.Person">Employee KPIs (New)</MudNavLink>
-        <MudNavLink Href="/position-kpi" Icon="@Icons.Material.Filled.ListAlt">Position KPI List</MudNavLink>
-        <MudNavLink Href="/employee-kpi" Icon="@Icons.Material.Filled.Person">Employee KPIs (Legacy)</MudNavLink>
-    </MudNavGroup>
-    <MudNavGroup Title="KPI Analytics" Icon="@Icons.Material.Filled.PieChart">
-        <MudNavLink Href="/kpi-views/employee" Icon="@Icons.Material.Filled.PersonSearch">Employee KPI View</MudNavLink>
-        <MudNavLink Href="/kpi-views/department" Icon="@Icons.Material.Filled.AccountBalance">Department KPI View</MudNavLink>
-        <MudNavLink Href="/kpi-views/team" Icon="@Icons.Material.Filled.GroupWork">Team KPI View</MudNavLink>
-        <MudNavLink Href="/kpi-views/position" Icon="@Icons.Material.Filled.WorkHistory">Position KPI View</MudNavLink>
-    </MudNavGroup>
-    <MudNavGroup Title="RDLC Reports" Icon="@Icons.Material.Filled.PictureAsPdf" Expanded="true">
-        <MudNavLink Href="/reports" Icon="@Icons.Material.Filled.Dashboard">Reports Dashboard</MudNavLink>
-        <MudNavLink Href="/reports/employee" Icon="@Icons.Material.Filled.Person">Employee Performance Summary</MudNavLink>
-        <MudNavLink Href="/reports/department" Icon="@Icons.Material.Filled.Domain">Department Performance Comparison</MudNavLink>
-        <MudNavLink Href="/reports/performers" Icon="@Icons.Material.Filled.Leaderboard">High & Low Performers</MudNavLink>
-        <MudNavLink Href="/reports/promotion" Icon="@Icons.Material.Filled.TrendingUp">Promotion Recommendations</MudNavLink>
-    </MudNavGroup>
-    <MudNavGroup Title="Security" Icon="@Icons.Material.Filled.Security">
-        <MudNavLink href="/users/manage-roles" Icon="@Icons.Material.Filled.AdminPanelSettings">User Access</MudNavLink>
-        <MudNavLink Href="/system-settings" Icon="@Icons.Material.Filled.Settings">System Settings</MudNavLink>
-    </MudNavGroup>
+
+    <!-- Scrollable body -->
+    <div style="flex: 1; overflow-y: auto; padding: 10px 0 20px;">
+
+        <MudNavLink Href="/" Icon="@Icons.Material.Outlined.Home" Match="NavLinkMatch.All">Home</MudNavLink>
+        <MudNavLink Href="/debug" Icon="@Icons.Material.Outlined.BugReport">Debug</MudNavLink>
+
+        <div class="nav-divider"></div>
+        <span class="nav-section-label">Organization</span>
+
+        <MudNavLink Href="/departments"  Icon="@Icons.Material.Outlined.Domain">Departments</MudNavLink>
+        <MudNavLink Href="/teams"        Icon="@Icons.Material.Outlined.Groups">Teams</MudNavLink>
+        <MudNavLink Href="/employees"    Icon="@Icons.Material.Outlined.Badge">Employees</MudNavLink>
+        <MudNavLink Href="/levels"       Icon="@Icons.Material.Outlined.SignalCellularAlt">Levels</MudNavLink>
+        <MudNavLink Href="/positions"    Icon="@Icons.Material.Outlined.Work">Positions</MudNavLink>
+
+        <div class="nav-divider"></div>
+        <span class="nav-section-label">Performance</span>
+
+        <MudNavLink Href="/appraisalcycles"        Icon="@Icons.Material.Outlined.EventNote">Appraisal Cycles</MudNavLink>
+        <MudNavLink Href="/appraisalforms"         Icon="@Icons.Material.Outlined.Description">Appraisal Forms</MudNavLink>
+        <MudNavLink Href="/appraisalquestions"     Icon="@Icons.Material.Outlined.Quiz">Appraisal Questions</MudNavLink>
+        <MudNavLink Href="/appraisalresponses"     Icon="@Icons.Material.Outlined.QuestionAnswer">Appraisal Responses</MudNavLink>
+        <MudNavLink Href="/performanceevaluations" Icon="@Icons.Material.Outlined.Assessment">Performance Evaluations</MudNavLink>
+        <MudNavLink Href="/performanceoutcomes"    Icon="@Icons.Material.Outlined.TaskAlt">Performance Outcomes</MudNavLink>
+        <MudNavLink Href="/pip"                    Icon="@Icons.Material.Outlined.TrendingUp">PIP Plans</MudNavLink>
+        <MudNavLink Href="/one-on-one-meetings"    Icon="@Icons.Material.Outlined.People">1:1 Meetings</MudNavLink>
+
+        <div class="nav-divider"></div>
+
+        <MudNavGroup Title="KPI Management" Icon="@Icons.Material.Outlined.BarChart" Expanded="false">
+            <MudNavLink Href="/kpi-hierarchy/master">Master KPI Library</MudNavLink>
+            <MudNavLink Href="/kpi-hierarchy/department">Department KPIs</MudNavLink>
+            <MudNavLink Href="/kpi-hierarchy/team">Team KPIs</MudNavLink>
+            <MudNavLink Href="/kpi-hierarchy/employee">Employee KPIs (New)</MudNavLink>
+            <MudNavLink Href="/position-kpi">Position KPI List</MudNavLink>
+            <MudNavLink Href="/employee-kpi">Employee KPIs (Legacy)</MudNavLink>
+        </MudNavGroup>
+
+        <MudNavGroup Title="KPI Analytics" Icon="@Icons.Material.Outlined.PieChart" Expanded="false">
+            <MudNavLink Href="/kpi-views/employee">Employee KPI View</MudNavLink>
+            <MudNavLink Href="/kpi-views/department">Department KPI View</MudNavLink>
+            <MudNavLink Href="/kpi-views/team">Team KPI View</MudNavLink>
+            <MudNavLink Href="/kpi-views/position">Position KPI View</MudNavLink>
+        </MudNavGroup>
+
+        <MudNavGroup Title="RDLC Reports" Icon="@Icons.Material.Outlined.PictureAsPdf" Expanded="false">
+            <MudNavLink Href="/reports">Reports Dashboard</MudNavLink>
+            <MudNavLink Href="/reports/employee">Employee Performance Summary</MudNavLink>
+            <MudNavLink Href="/reports/department">Department Performance Comparison</MudNavLink>
+            <MudNavLink Href="/reports/performers">High &amp; Low Performers</MudNavLink>
+            <MudNavLink Href="/reports/promotion">Promotion Recommendations</MudNavLink>
+        </MudNavGroup>
+
+        <MudNavGroup Title="Reports &amp; Analytics" Icon="@Icons.Material.Outlined.Assessment" Expanded="false">
+            <MudNavLink Href="/reports/employee-performance">Employee Performance Report</MudNavLink>
+        </MudNavGroup>
+
+        <div class="nav-divider"></div>
+
+        <MudNavGroup Title="Security" Icon="@Icons.Material.Outlined.Security" Expanded="false">
+            <MudNavLink Href="/users/manage-roles">User Access</MudNavLink>
+            <MudNavLink Href="/system-settings">System Settings</MudNavLink>
+        </MudNavGroup>
+
+    </div>
+
+    <!-- Footer logout -->
+    <div style="padding: 12px 14px; border-top: 1px solid #f3f4f6;">
+        <MudNavLink Href="/logout" Icon="@Icons.Material.Outlined.Logout"
+            Style="margin: 3px 14px; padding: 12px 18px; border-radius: 12px; color: #6b7280; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);">
+            Logout
+        </MudNavLink>
+    </div>
+
 </MudNavMenu>
 
 @code {
-    [Parameter]
-    public Action? CloseDrawer { get; set; }
+    [Parameter] public Action? CloseDrawer { get; set; }
 }
