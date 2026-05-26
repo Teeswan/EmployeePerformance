@@ -15,6 +15,29 @@ public class RdlcReportService : IRdlcReportService
             using var reportStream = GetReportStream("EmployeePerformanceSummary.rdlc");
             report.LoadReportDefinition(reportStream);
 
+            // 1. Pass single/scalar fields using Report Parameters
+            var reportParameters = new List<ReportParameter>
+            {
+                new ReportParameter("EmployeeCode", reportData.EmployeeCode ?? string.Empty),
+                new ReportParameter("FullName", reportData.FullName ?? string.Empty),
+                new ReportParameter("PositionTitle", reportData.PositionTitle ?? string.Empty),
+                new ReportParameter("LevelName", reportData.LevelName ?? string.Empty),
+                new ReportParameter("DepartmentName", reportData.DepartmentName ?? string.Empty),
+                new ReportParameter("ReviewPeriod", reportData.ReviewPeriod ?? string.Empty),
+                new ReportParameter("TotalWeightedScore", reportData.TotalWeightedScore.ToString("N2")),
+                new ReportParameter("AchievementPercentage", reportData.AchievementPercentage.ToString("N2")),
+                new ReportParameter("FinalRating", reportData.FinalRating.ToString("N1")),
+                new ReportParameter("PerformanceLevel", reportData.PerformanceLevel ?? string.Empty),
+                new ReportParameter("PromotionEligibility", reportData.PromotionEligibility ? "Yes" : "No"),
+                new ReportParameter("HasActivePip", reportData.HasActivePip ? "Yes" : "No")
+            };
+            report.SetParameters(reportParameters);
+
+            // 2. Pass collections using Report Data Sources
+            // Note: The string names ("KpiScoresDataSet" and "FeedbackDataSet") must match the names defined in the RDLC XML file
+            report.DataSources.Add(new ReportDataSource("KpiScoresDataSet", reportData.KpiCategoryScores));
+            report.DataSources.Add(new ReportDataSource("FeedbackDataSet", reportData.FeedbackCriteria));
+
             return report.Render("PDF");
         });
     }

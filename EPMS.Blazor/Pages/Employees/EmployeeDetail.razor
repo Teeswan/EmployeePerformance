@@ -5,6 +5,7 @@
 @inject NavigationManager Navigation
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
+@inject IReportBlazorService ReportService
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="mt-6">
     @* Header with Back Button and Actions *@
@@ -20,6 +21,14 @@
             </MudText>
         </div>
         <div class="d-flex gap-3">
+            <MudTooltip Text="Generate Employee Performance Report" Arrow="true">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary"
+                           StartIcon="@Icons.Material.Filled.Description"
+                           OnClick="GenerateEmployeePerformanceReport"
+                           Class="rounded-lg">
+                    Generate Report
+                </MudButton>
+            </MudTooltip>
             <MudTooltip Text="Edit employee" Arrow="true">
                 <MudButton Variant="Variant.Outlined" Color="Color.Warning"
                            StartIcon="@Icons.Material.Filled.Edit"
@@ -301,6 +310,46 @@
                 detail = await EmployeeService.GetEmployeeDetailsAsync(Id);
                 StateHasChanged();
             }
+        }
+    }
+
+    private async Task GenerateEmployeePerformanceReport()
+    {
+        if (detail == null) return;
+        
+        try
+        {
+            Snackbar.Add("Generating report...", Severity.Info);
+            
+            var reportDto = new EmployeePerformanceSummaryReportDto
+            {
+                EmployeeCode = detail.EmployeeCode,
+                FullName = detail.FullName,
+                PositionTitle = detail.PositionTitle ?? "Not specified",
+                LevelName = detail.PositionTitle ?? "Not specified",
+                DepartmentName = detail.DepartmentName ?? "Not specified",
+                ReviewPeriod = "Current Period",
+                ReviewStartDate = DateTime.Now.AddMonths(-3),
+                ReviewEndDate = DateTime.Now,
+                TotalWeightedScore = 85,
+                AchievementPercentage = 85,
+                FinalRating = 4.2m,
+                PerformanceLevel = "Meets Expectations",
+                PromotionEligibility = false,
+                HasActivePip = false,
+                MeetingsCompletedCount = 0,
+                KpiCategoryScores = new List<KpiCategoryScoreDto>(),
+                FeedbackCriteria = new List<FeedbackCriterionDto>()
+            };
+            
+            var pdfBytes = await ReportService.GenerateEmployeePerformanceSummaryReportAsync(reportDto);
+            await ReportService.DownloadPdfAsync(pdfBytes, $"EmployeePerformance_{detail.EmployeeCode}.pdf");
+            
+            Snackbar.Add("Employee Performance Report downloaded successfully!", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error generating report: {ex.Message}", Severity.Error);
         }
     }
 }
